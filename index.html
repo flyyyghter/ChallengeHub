@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TypingSpeed — тест скорости ввода</title>
+  <meta name="description" content="Проверь скорость набора любого текста или пароля. Таймер стартует с первого символа и останавливается на последнем правильном." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">⌨</span>
+        <span class="logo-text">TypingSpeed</span>
+      </div>
+      <p class="header-sub">Тест скорости ввода</p>
+    </header>
+
+    <!-- Setup screen -->
+    <section class="screen" id="screen-setup">
+      <div class="card setup-card">
+        <h1 class="card-title">Что будем набирать?</h1>
+        <p class="card-desc">Введи любой текст, пароль или фразу — и проверь, насколько быстро твои пальцы.</p>
+
+        <div class="input-group">
+          <label class="label" for="target-input">Целевой текст</label>
+          <div class="target-wrapper">
+            <input
+              id="target-input"
+              class="target-input"
+              type="text"
+              placeholder="например: 1234 или Hello World!"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <button class="btn-clear" id="btn-clear" title="Очистить" aria-label="Очистить">✕</button>
+          </div>
+        </div>
+
+        <div class="presets">
+          <span class="presets-label">Быстрый выбор:</span>
+          <button class="preset-chip" data-val="1234">1234</button>
+          <button class="preset-chip" data-val="qwerty">qwerty</button>
+          <button class="preset-chip" data-val="password123">password123</button>
+          <button class="preset-chip" data-val="Hello, World!">Hello, World!</button>
+          <button class="preset-chip" data-val="abcdefghij">abcdefghij</button>
+        </div>
+
+        <button class="btn-primary" id="btn-start">Начать тест</button>
+      </div>
+    </section>
+
+    <!-- Test screen -->
+    <section class="screen hidden" id="screen-test">
+      <div class="card test-card">
+
+        <div class="stats-row" id="stats-row">
+          <div class="stat-box">
+            <span class="stat-value" id="stat-time">0.000</span>
+            <span class="stat-label">секунд</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value" id="stat-wpm">—</span>
+            <span class="stat-label">симв/с</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value" id="stat-progress">0%</span>
+            <span class="stat-label">прогресс</span>
+          </div>
+        </div>
+
+        <!-- Target display -->
+        <div class="target-display" id="target-display" aria-label="Целевой текст"></div>
+
+        <!-- Progress bar -->
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+
+        <!-- Typing input -->
+        <div class="typing-wrapper">
+          <input
+            id="typing-input"
+            class="typing-input"
+            type="text"
+            placeholder="Начни вводить здесь…"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+          />
+          <div class="typing-hint" id="typing-hint">⏱ Таймер стартует с первого символа</div>
+        </div>
+
+        <button class="btn-secondary" id="btn-restart">↩ Начать заново</button>
+      </div>
+    </section>
+
+    <!-- Result screen -->
+    <section class="screen hidden" id="screen-result">
+      <div class="card result-card">
+
+        <div class="result-icon" id="result-icon">🎉</div>
+        <h2 class="result-title" id="result-title">Готово!</h2>
+        <p class="result-sub" id="result-sub">Вот твой результат:</p>
+
+        <div class="result-grid">
+          <div class="result-stat">
+            <span class="result-val" id="res-time">—</span>
+            <span class="result-key">Время</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-val" id="res-cps">—</span>
+            <span class="result-key">симв/с</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-val" id="res-wpm">—</span>
+            <span class="result-key">WPM</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-val" id="res-chars">—</span>
+            <span class="result-key">Символов</span>
+          </div>
+        </div>
+
+        <div class="result-rating" id="result-rating"></div>
+
+        <div class="result-actions">
+          <button class="btn-primary" id="btn-retry">Повторить</button>
+          <button class="btn-secondary" id="btn-new">Новый текст</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
