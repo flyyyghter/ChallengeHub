@@ -1,25 +1,18 @@
-# TypingSpeed
+# ChallengeHub
 
-A minimalist typing speed test. Type anything you want, a password, a phrase, random numbers, whatever, and see how fast you actually are.
+A growing collection of browser mini-games that test your precision, speed, and reaction. No installs, no accounts, just open and play.
 
-## How it works
+## Games
 
-1. Enter your target text (or pick a preset)
-2. Hit **Start Test**
-3. Start typing in the input field
-4. Timer starts the moment you hit the first key
-5. Timer stops automatically when you complete the last correct character, no Enter needed
+### Typing Speed
+Enter any text, a password, a phrase, a sequence of numbers, whatever you want. Timer starts on your first keypress and stops the moment you complete the last correct character. No Enter needed.
 
-## What you get
+### Timing Challenge
+A random moment between 0 and 10 seconds is shown. You have to hit STOP exactly when the running timer reaches it. No hints, no markers, pure feel. Three rounds, then a breakdown of your accuracy.
 
-- Live timer with milliseconds
-- Characters per second, updated in real time
-- Per-character highlighting: green for correct, red for wrong
-- Final results: time, CPS, WPM, and a speed rating
+## How to run
 
-## Run it
-
-Just open `index.html` in your browser. No dependencies, no build step, no install.
+Open `index.html` in any browser. No build step, no dependencies.
 
 ---
 

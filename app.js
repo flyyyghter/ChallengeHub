@@ -262,7 +262,6 @@ const tmRoundBadge   = document.getElementById('tm-round-badge');
 const tmTargetTime   = document.getElementById('tm-target-time');
 const tmClock        = document.getElementById('tm-clock');
 const tmBarFill      = document.getElementById('tm-bar-fill');
-const tmBarTarget    = document.getElementById('tm-bar-target');
 const btnTmStart     = document.getElementById('btn-tm-start');
 const btnTmGo        = document.getElementById('btn-tm-go');
 const btnTmStop      = document.getElementById('btn-tm-stop');
@@ -324,8 +323,7 @@ function tmBeginRound() {
   tmClock.textContent      = '0:00';
   tmBarFill.style.width    = '0%';
 
-  // Position the target marker
-  tmBarTarget.style.left = ((tmState.targetMs / TM_DURATION) * 100) + '%';
+  // Position the target marker - removed (challenge mode!)
 
   btnTmGo.style.display   = '';
   btnTmStop.disabled      = true;
