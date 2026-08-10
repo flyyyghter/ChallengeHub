@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TypingSpeed — тест скорости ввода</title>
-  <meta name="description" content="Проверь скорость набора любого текста или пароля. Таймер стартует с первого символа и останавливается на последнем правильном." />
+  <title>PrecisionLab — Typing & Timing</title>
+  <meta name="description" content="Two mini-games: typing speed test and reaction timing challenge. Clean, minimal, no nonsense." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -12,134 +12,237 @@
 </head>
 <body>
 
+  <!-- Ambient blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
   <div class="app">
 
-    <!-- Header -->
+    <!-- Header + Nav -->
     <header class="header">
       <div class="logo">
-        <span class="logo-icon">⌨</span>
-        <span class="logo-text">TypingSpeed</span>
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">PrecisionLab</span>
       </div>
-      <p class="header-sub">Тест скорости ввода</p>
+
+      <nav class="tab-nav" role="tablist">
+        <button class="tab-btn active" id="tab-typing" role="tab" aria-selected="true" data-tab="typing">
+          <span class="tab-icon">⌨</span>
+          <span>Typing</span>
+        </button>
+        <button class="tab-btn" id="tab-timing" role="tab" aria-selected="false" data-tab="timing">
+          <span class="tab-icon">⏱</span>
+          <span>Timing</span>
+        </button>
+      </nav>
     </header>
 
-    <!-- Setup screen -->
-    <section class="screen" id="screen-setup">
-      <div class="card setup-card">
-        <h1 class="card-title">Что будем набирать?</h1>
-        <p class="card-desc">Введи любой текст, пароль или фразу — и проверь, насколько быстро твои пальцы.</p>
+    <!-- ══════════════ TYPING TAB ══════════════ -->
+    <div class="tab-content" id="tab-content-typing">
 
-        <div class="input-group">
-          <label class="label" for="target-input">Целевой текст</label>
-          <div class="target-wrapper">
-            <input
-              id="target-input"
-              class="target-input"
-              type="text"
-              placeholder="например: 1234 или Hello World!"
-              autocomplete="off"
-              spellcheck="false"
-            />
-            <button class="btn-clear" id="btn-clear" title="Очистить" aria-label="Очистить">✕</button>
+      <!-- Setup -->
+      <section class="panel" id="ts-setup">
+        <div class="glass-card">
+          <h1 class="card-title">Что набираем?</h1>
+          <p class="card-desc">Любой текст, пароль, фраза — таймер стартует с первого символа и останавливается на последнем правильном.</p>
+
+          <div class="field">
+            <label class="field-label" for="target-input">Целевой текст</label>
+            <div class="input-wrap">
+              <input id="target-input" class="glass-input" type="text"
+                placeholder="например: 1234 или Hello World!"
+                autocomplete="off" spellcheck="false" />
+              <button class="btn-icon" id="btn-clear" title="Очистить">✕</button>
+            </div>
+          </div>
+
+          <div class="chips">
+            <span class="chips-label">Быстрый выбор:</span>
+            <button class="chip" data-val="1234">1234</button>
+            <button class="chip" data-val="qwerty">qwerty</button>
+            <button class="chip" data-val="password123">password123</button>
+            <button class="chip" data-val="Hello, World!">Hello, World!</button>
+            <button class="chip" data-val="abcdefghij">abcdefghij</button>
+          </div>
+
+          <button class="btn-primary" id="btn-ts-start">Начать тест →</button>
+        </div>
+      </section>
+
+      <!-- Test -->
+      <section class="panel hidden" id="ts-test">
+        <div class="glass-card">
+          <div class="stats-row">
+            <div class="stat-box">
+              <span class="stat-val" id="ts-time">0.000</span>
+              <span class="stat-lbl">секунд</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-val" id="ts-cps">—</span>
+              <span class="stat-lbl">симв/с</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-val" id="ts-progress">0%</span>
+              <span class="stat-lbl">прогресс</span>
+            </div>
+          </div>
+
+          <div class="target-display" id="ts-target-display"></div>
+
+          <div class="progress-track"><div class="progress-fill" id="ts-progress-fill"></div></div>
+
+          <div class="field">
+            <input id="typing-input" class="glass-input mono" type="text"
+              placeholder="Начни вводить здесь…"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <div class="hint" id="ts-hint">⏱ Таймер стартует с первого символа</div>
+          </div>
+
+          <button class="btn-ghost" id="btn-ts-restart">↩ Начать заново</button>
+        </div>
+      </section>
+
+      <!-- Result -->
+      <section class="panel hidden" id="ts-result">
+        <div class="glass-card result-card">
+          <div class="result-emoji" id="ts-res-icon">🎉</div>
+          <h2 class="result-title" id="ts-res-title">Готово!</h2>
+          <p class="result-sub" id="ts-res-sub"></p>
+
+          <div class="result-grid">
+            <div class="result-cell">
+              <span class="result-big" id="ts-r-time">—</span>
+              <span class="result-lbl">Время</span>
+            </div>
+            <div class="result-cell">
+              <span class="result-big" id="ts-r-cps">—</span>
+              <span class="result-lbl">симв/с</span>
+            </div>
+            <div class="result-cell">
+              <span class="result-big" id="ts-r-wpm">—</span>
+              <span class="result-lbl">WPM</span>
+            </div>
+            <div class="result-cell">
+              <span class="result-big" id="ts-r-chars">—</span>
+              <span class="result-lbl">Символов</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn-primary" id="btn-ts-retry">Повторить</button>
+            <button class="btn-ghost" id="btn-ts-new">Новый текст</button>
           </div>
         </div>
+      </section>
 
-        <div class="presets">
-          <span class="presets-label">Быстрый выбор:</span>
-          <button class="preset-chip" data-val="1234">1234</button>
-          <button class="preset-chip" data-val="qwerty">qwerty</button>
-          <button class="preset-chip" data-val="password123">password123</button>
-          <button class="preset-chip" data-val="Hello, World!">Hello, World!</button>
-          <button class="preset-chip" data-val="abcdefghij">abcdefghij</button>
+    </div><!-- /typing tab -->
+
+
+    <!-- ══════════════ TIMING TAB ══════════════ -->
+    <div class="tab-content hidden" id="tab-content-timing">
+
+      <!-- Intro -->
+      <section class="panel" id="tm-intro">
+        <div class="glass-card">
+          <h1 class="card-title">Timing Challenge</h1>
+          <p class="card-desc">Таймер идёт от 0 до 10 секунд. Тебе покажут случайный момент — нажми кнопку точно в этот момент. Три раунда, потом аналитика.</p>
+
+          <div class="tm-preview">
+            <div class="tm-preview-target">
+              <span class="preview-label">Цель</span>
+              <span class="preview-time">5:56</span>
+            </div>
+            <p class="preview-hint">Нажми STOP когда таймер покажет это время</p>
+          </div>
+
+          <button class="btn-primary" id="btn-tm-start">Начать игру →</button>
         </div>
+      </section>
 
-        <button class="btn-primary" id="btn-start">Начать тест</button>
-      </div>
-    </section>
+      <!-- Round -->
+      <section class="panel hidden" id="tm-round">
+        <div class="glass-card">
 
-    <!-- Test screen -->
-    <section class="screen hidden" id="screen-test">
-      <div class="card test-card">
-
-        <div class="stats-row" id="stats-row">
-          <div class="stat-box">
-            <span class="stat-value" id="stat-time">0.000</span>
-            <span class="stat-label">секунд</span>
+          <div class="tm-header">
+            <span class="round-badge" id="tm-round-badge">Раунд 1 / 3</span>
           </div>
-          <div class="stat-box">
-            <span class="stat-value" id="stat-wpm">—</span>
-            <span class="stat-label">симв/с</span>
+
+          <!-- Target time -->
+          <div class="tm-target-wrap">
+            <p class="tm-target-label">Попади в момент</p>
+            <div class="tm-target-time" id="tm-target-time">—:——</div>
           </div>
-          <div class="stat-box">
-            <span class="stat-value" id="stat-progress">0%</span>
-            <span class="stat-label">прогресс</span>
+
+          <!-- Running timer -->
+          <div class="tm-clock-wrap">
+            <div class="tm-clock" id="tm-clock">0:00</div>
+            <div class="tm-bar-track">
+              <div class="tm-bar-fill" id="tm-bar-fill"></div>
+              <div class="tm-bar-target" id="tm-bar-target"></div>
+            </div>
+          </div>
+
+          <button class="btn-stop" id="btn-tm-stop" disabled>STOP</button>
+          <div class="hint" id="tm-hint">Нажми Start чтобы запустить таймер</div>
+          <button class="btn-primary" id="btn-tm-go" style="margin-top:8px">▶ Start</button>
+        </div>
+      </section>
+
+      <!-- Round result flash -->
+      <section class="panel hidden" id="tm-round-result">
+        <div class="glass-card text-center">
+          <div class="result-emoji" id="tm-rr-icon">🎯</div>
+          <h2 class="result-title" id="tm-rr-title">Отлично!</h2>
+          <p class="result-sub" id="tm-rr-diff">Отклонение: 45 мс</p>
+          <div class="tm-accuracy-bar-wrap">
+            <div class="tm-accuracy-bar">
+              <div class="tm-accuracy-fill" id="tm-rr-bar"></div>
+              <div class="tm-accuracy-marker"></div>
+            </div>
+            <div class="tm-accuracy-labels">
+              <span>−500мс</span><span>Идеал</span><span>+500мс</span>
+            </div>
+          </div>
+          <button class="btn-primary" id="btn-tm-next">Следующий раунд →</button>
+        </div>
+      </section>
+
+      <!-- Final analytics -->
+      <section class="panel hidden" id="tm-analytics">
+        <div class="glass-card">
+          <div class="result-emoji" id="tm-final-icon">📊</div>
+          <h2 class="result-title">Результаты</h2>
+          <p class="result-sub">3 раунда завершены</p>
+
+          <div class="analytics-rounds" id="analytics-rounds"></div>
+
+          <div class="analytics-summary">
+            <div class="summary-cell">
+              <span class="summary-val" id="an-avg">—</span>
+              <span class="summary-lbl">Среднее отклонение</span>
+            </div>
+            <div class="summary-cell">
+              <span class="summary-val" id="an-best">—</span>
+              <span class="summary-lbl">Лучший раунд</span>
+            </div>
+            <div class="summary-cell">
+              <span class="summary-val" id="an-score">—</span>
+              <span class="summary-lbl">Точность</span>
+            </div>
+          </div>
+
+          <div class="rating-box" id="an-rating"></div>
+
+          <div class="actions">
+            <button class="btn-primary" id="btn-tm-replay">Сыграть снова</button>
           </div>
         </div>
+      </section>
 
-        <!-- Target display -->
-        <div class="target-display" id="target-display" aria-label="Целевой текст"></div>
+    </div><!-- /timing tab -->
 
-        <!-- Progress bar -->
-        <div class="progress-track">
-          <div class="progress-fill" id="progress-fill"></div>
-        </div>
-
-        <!-- Typing input -->
-        <div class="typing-wrapper">
-          <input
-            id="typing-input"
-            class="typing-input"
-            type="text"
-            placeholder="Начни вводить здесь…"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-          />
-          <div class="typing-hint" id="typing-hint">⏱ Таймер стартует с первого символа</div>
-        </div>
-
-        <button class="btn-secondary" id="btn-restart">↩ Начать заново</button>
-      </div>
-    </section>
-
-    <!-- Result screen -->
-    <section class="screen hidden" id="screen-result">
-      <div class="card result-card">
-
-        <div class="result-icon" id="result-icon">🎉</div>
-        <h2 class="result-title" id="result-title">Готово!</h2>
-        <p class="result-sub" id="result-sub">Вот твой результат:</p>
-
-        <div class="result-grid">
-          <div class="result-stat">
-            <span class="result-val" id="res-time">—</span>
-            <span class="result-key">Время</span>
-          </div>
-          <div class="result-stat">
-            <span class="result-val" id="res-cps">—</span>
-            <span class="result-key">симв/с</span>
-          </div>
-          <div class="result-stat">
-            <span class="result-val" id="res-wpm">—</span>
-            <span class="result-key">WPM</span>
-          </div>
-          <div class="result-stat">
-            <span class="result-val" id="res-chars">—</span>
-            <span class="result-key">Символов</span>
-          </div>
-        </div>
-
-        <div class="result-rating" id="result-rating"></div>
-
-        <div class="result-actions">
-          <button class="btn-primary" id="btn-retry">Повторить</button>
-          <button class="btn-secondary" id="btn-new">Новый текст</button>
-        </div>
-      </div>
-    </section>
-
-  </div>
+  </div><!-- /app -->
 
   <script src="app.js"></script>
 </body>
