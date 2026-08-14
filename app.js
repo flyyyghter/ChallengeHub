@@ -1,7 +1,370 @@
-/* ═══════════════════════════════════════
-   PrecisionLab — app.js
-   Two games: Typing Speed + Timing Challenge
-═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   ChallengeHub — app.js
+   Mini Games: Typing Speed + Timing Challenge
+   Settings, Localization (RU/EN), Liquid Sound Engine
+═══════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════
+   LOCALIZATION (i18n)
+════════════════════════════════ */
+const i18n = {
+  ru: {
+    tab_typing: 'Typing',
+    tab_timing: 'Timing',
+    settings_title: 'Настройки',
+    setting_lang_label: 'Язык интерфейса',
+    setting_lang_desc: 'Русский / English',
+    setting_vol_label: 'Громкость звуков',
+    setting_vol_desc: 'Звуковые эффекты игры',
+    btn_done: 'Готово',
+
+    // Typing
+    ts_setup_title: 'Что набираем?',
+    ts_setup_desc: 'Любой текст, пароль, фраза — таймер стартует с первого символа и останавливается на последнем правильном.',
+    ts_target_label: 'Целевой текст',
+    ts_target_ph: 'например: 1234 или Hello World!',
+    chips_quick_select: 'Быстрый выбор:',
+    btn_start_test: 'Начать тест →',
+    lbl_seconds: 'секунд',
+    lbl_cps: 'симв/с',
+    lbl_progress: 'прогресс',
+    ts_typing_ph: 'Начни вводить здесь…',
+    ts_hint_init: '⏱ Таймер стартует с первого символа',
+    ts_paste_blocked: '⚠️ Вставка текста отключена — вводи вручную!',
+    btn_restart: '↩ Начать заново',
+    ts_res_title_done: 'Готово!',
+    res_lbl_time: 'Время',
+    res_lbl_chars: 'Символов',
+    btn_retry: 'Повторить',
+    btn_new_text: 'Новый текст',
+
+    // Typing Ratings
+    rate_too_short: 'Маловато символов',
+    rate_too_short_desc: 'Попробуй текст подлиннее — будет точнее!',
+    rate_slow: 'Медленно',
+    rate_slow_desc: 'Практика сделает своё дело. Не сдавайся!',
+    rate_medium: 'Средне',
+    rate_medium_desc: 'Уже неплохо. Ещё немного тренировок!',
+    rate_good: 'Хорошо!',
+    rate_good_desc: 'Уверенная скорость. Ты явно не новичок.',
+    rate_fast: 'Быстро!',
+    rate_fast_desc: 'Отличный результат. Пальцы летают!',
+    rate_insane: 'Реактивный!',
+    rate_insane_desc: 'Невероятная скорость. Ты точно практикуешься!',
+
+    // Timing Challenge
+    tm_title: 'Timing Challenge',
+    tm_desc: 'Таймер идёт от 0 до 10 секунд. Тебе покажут случайный момент — нажми кнопку точно в этот момент. Три раунда, потом аналитика.',
+    tm_target_preview_lbl: 'Цель',
+    tm_preview_hint: 'Нажми STOP когда таймер покажет это время',
+    btn_start_game: 'Начать игру →',
+    round_prefix: 'Раунд',
+    tm_target_lbl: 'Попади в момент',
+    tm_hint_start: 'Нажми Start (или Пробел) чтобы запустить таймер',
+    tm_hint_running: 'Нажми STOP (или Пробел) в нужный момент!',
+    btn_start_timer: '▶ Start',
+    tm_ideal: 'Идеал',
+    btn_next_round: 'Следующий раунд →',
+    tm_analytics_title: 'Результаты',
+    tm_rounds_done: '3 раунда завершены',
+    an_avg_lbl: 'Среднее отклонение',
+    an_best_lbl: 'Лучший раунд',
+    an_score_lbl: 'Точность',
+    btn_replay: 'Сыграть снова',
+    diff_lbl: 'Отклонение',
+
+    // Timing Ratings
+    tm_r_perfect: 'Идеально!',
+    tm_r_great: 'Отлично!',
+    tm_r_good: 'Хорошо',
+    tm_r_decent: 'Неплохо',
+    tm_r_miss: 'Промах',
+    tm_r_fail: 'Мимо кассы',
+
+    // Final Ratings
+    fin_legend: 'Легендарно!',
+    fin_legend_desc: 'Реакция как у машины. Невероятно.',
+    fin_sniper: 'Снайпер!',
+    fin_sniper_desc: 'Отличная точность и чувство времени.',
+    fin_good: 'Хорошо!',
+    fin_good_desc: 'Стабильный результат. Можно лучше!',
+    fin_medium: 'Средне',
+    fin_medium_desc: 'Ещё немного практики — и будет огонь.',
+    fin_train: 'Тренируйся!',
+    fin_train_desc: 'Чувство ритма нарабатывается. Не сдавайся!',
+  },
+
+  en: {
+    tab_typing: 'Typing',
+    tab_timing: 'Timing',
+    settings_title: 'Settings',
+    setting_lang_label: 'Language',
+    setting_lang_desc: 'Russian / English',
+    setting_vol_label: 'Sound Volume',
+    setting_vol_desc: 'In-game sound effects',
+    btn_done: 'Done',
+
+    // Typing
+    ts_setup_title: 'What to type?',
+    ts_setup_desc: 'Any text, password, or phrase — timer starts on your first keypress and stops on the last correct character.',
+    ts_target_label: 'Target text',
+    ts_target_ph: 'e.g. 1234 or Hello World!',
+    chips_quick_select: 'Quick select:',
+    btn_start_test: 'Start Test →',
+    lbl_seconds: 'seconds',
+    lbl_cps: 'chars/s',
+    lbl_progress: 'progress',
+    ts_typing_ph: 'Start typing here…',
+    ts_hint_init: '⏱ Timer starts on the first character',
+    ts_paste_blocked: '⚠️ Paste disabled — please type manually!',
+    btn_restart: '↩ Restart',
+    ts_res_title_done: 'Completed!',
+    res_lbl_time: 'Time',
+    res_lbl_chars: 'Characters',
+    btn_retry: 'Retry',
+    btn_new_text: 'New Text',
+
+    // Typing Ratings
+    rate_too_short: 'Too short',
+    rate_too_short_desc: 'Try a longer text for a more accurate score!',
+    rate_slow: 'Slow',
+    rate_slow_desc: 'Practice makes perfect. Keep going!',
+    rate_medium: 'Average',
+    rate_medium_desc: 'Pretty good start. A little more practice!',
+    rate_good: 'Good!',
+    rate_good_desc: 'Solid typing speed. You got the rhythm.',
+    rate_fast: 'Fast!',
+    rate_fast_desc: 'Great score. Your fingers are flying!',
+    rate_insane: 'Insane!',
+    rate_insane_desc: 'Incredible speed. Pure muscle memory!',
+
+    // Timing Challenge
+    tm_title: 'Timing Challenge',
+    tm_desc: 'A random timestamp from 0 to 10s is given. Hit STOP exactly when the clock reaches it. 3 rounds followed by breakdown.',
+    tm_target_preview_lbl: 'Target',
+    tm_preview_hint: 'Hit STOP when timer hits this exact time',
+    btn_start_game: 'Start Game →',
+    round_prefix: 'Round',
+    tm_target_lbl: 'Hit the moment',
+    tm_hint_start: 'Press Start (or Spacebar) to start the timer',
+    tm_hint_running: 'Press STOP (or Spacebar) at the exact moment!',
+    btn_start_timer: '▶ Start',
+    tm_ideal: 'Ideal',
+    btn_next_round: 'Next Round →',
+    tm_analytics_title: 'Results',
+    tm_rounds_done: '3 rounds completed',
+    an_avg_lbl: 'Avg Deviation',
+    an_best_lbl: 'Best Round',
+    an_score_lbl: 'Accuracy',
+    btn_replay: 'Play Again',
+    diff_lbl: 'Deviation',
+
+    // Timing Ratings
+    tm_r_perfect: 'Perfect!',
+    tm_r_great: 'Great!',
+    tm_r_good: 'Good',
+    tm_r_decent: 'Decent',
+    tm_r_miss: 'Missed',
+    tm_r_fail: 'Way off',
+
+    // Final Ratings
+    fin_legend: 'Legendary!',
+    fin_legend_desc: 'Machine-like reaction. Incredible precision.',
+    fin_sniper: 'Sniper!',
+    fin_sniper_desc: 'Superb timing and rhythm feeling.',
+    fin_good: 'Good!',
+    fin_good_desc: 'Solid consistency. Room to sharpen up!',
+    fin_medium: 'Average',
+    fin_medium_desc: 'Keep training — you will get there.',
+    fin_train: 'Keep Trying!',
+    fin_train_desc: 'Rhythm sense takes practice. Don’t give up!',
+  }
+};
+
+/* ════════════════════════════════
+   SETTINGS STATE & AUDIO ENGINE
+════════════════════════════════ */
+const settings = {
+  lang: localStorage.getItem('ch_lang') || 'ru',
+  volume: parseInt(localStorage.getItem('ch_volume') || '80', 10),
+  muted: localStorage.getItem('ch_muted') === 'true',
+};
+
+// Web Audio Liquid Synthesizer
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) audioCtx = new AudioCtx();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+function playSound(type) {
+  if (settings.muted || settings.volume <= 0) return;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const gain = ctx.createGain();
+    const now = ctx.currentTime;
+    const vol = (settings.volume / 100) * 0.15;
+    gain.gain.setValueAtTime(vol, now);
+    gain.connect(ctx.destination);
+
+    const osc = ctx.createOscillator();
+    osc.connect(gain);
+
+    if (type === 'bubble') {
+      // Soft water droplet blip
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(450, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+      osc.start(now);
+      osc.stop(now + 0.09);
+    } else if (type === 'click') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(600, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc.start(now);
+      osc.stop(now + 0.04);
+    } else if (type === 'stop') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.exponentialRampToValueAtTime(260, now + 0.14);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.start(now);
+      osc.stop(now + 0.15);
+    } else if (type === 'win') {
+      // Harmonic liquid chime
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, now); // D5
+      osc.frequency.setValueAtTime(880, now + 0.08); // A5
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    }
+  } catch (e) {
+    // Ignore audio restrictions
+  }
+}
+
+/* ════════════════════════════════
+   APPLY LANGUAGE TO DOM
+════════════════════════════════ */
+function t(key) {
+  const dict = i18n[settings.lang] || i18n.ru;
+  return dict[key] || key;
+}
+
+function updateLanguage(lang) {
+  settings.lang = lang;
+  localStorage.setItem('ch_lang', lang);
+
+  // Update active state on lang buttons
+  document.getElementById('lang-ru').classList.toggle('active', lang === 'ru');
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+
+  // Update all [data-i18n] text nodes
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (t(key)) el.textContent = t(key);
+  });
+
+  // Update placeholders [data-i18n-ph]
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.dataset.i18nPh;
+    if (t(key)) el.placeholder = t(key);
+  });
+
+  // Update dynamic round badge if on timing screen
+  if (tmState.round > 0) {
+    tmRoundBadge.textContent = `${t('round_prefix')} ${tmState.round} / ${TM_ROUNDS}`;
+  }
+}
+
+/* ════════════════════════════════
+   SETTINGS MODAL LOGIC
+════════════════════════════════ */
+const btnSettings       = document.getElementById('btn-settings');
+const modalBackdrop     = document.getElementById('modal-settings-backdrop');
+const btnCloseSettings  = document.getElementById('btn-close-settings');
+const btnSaveSettings   = document.getElementById('btn-save-settings');
+const btnLangRu         = document.getElementById('lang-ru');
+const btnLangEn         = document.getElementById('lang-en');
+const volSlider         = document.getElementById('vol-slider');
+const volValueDisplay   = document.getElementById('vol-value-display');
+const btnMute           = document.getElementById('btn-mute');
+const volIcon           = document.getElementById('vol-icon');
+
+function openSettings() {
+  modalBackdrop.classList.remove('hidden');
+  playSound('click');
+}
+
+function closeSettings() {
+  modalBackdrop.classList.add('hidden');
+  playSound('click');
+}
+
+btnSettings.addEventListener('click', openSettings);
+btnCloseSettings.addEventListener('click', closeSettings);
+btnSaveSettings.addEventListener('click', closeSettings);
+
+modalBackdrop.addEventListener('click', (e) => {
+  if (e.target === modalBackdrop) closeSettings();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !modalBackdrop.classList.contains('hidden')) {
+    closeSettings();
+  }
+});
+
+btnLangRu.addEventListener('click', () => {
+  updateLanguage('ru');
+  playSound('bubble');
+});
+
+btnLangEn.addEventListener('click', () => {
+  updateLanguage('en');
+  playSound('bubble');
+});
+
+// Volume Slider Sync
+function updateVolumeUI() {
+  volSlider.value = settings.volume;
+  volValueDisplay.textContent = settings.muted ? '0%' : `${settings.volume}%`;
+  
+  if (settings.muted || settings.volume === 0) {
+    volIcon.textContent = '🔇';
+  } else if (settings.volume < 40) {
+    volIcon.textContent = '🔉';
+  } else {
+    volIcon.textContent = '🔊';
+  }
+}
+
+volSlider.addEventListener('input', (e) => {
+  settings.volume = parseInt(e.target.value, 10);
+  settings.muted = settings.volume === 0;
+  localStorage.setItem('ch_volume', settings.volume);
+  localStorage.setItem('ch_muted', settings.muted);
+  updateVolumeUI();
+  playSound('bubble');
+});
+
+btnMute.addEventListener('click', () => {
+  settings.muted = !settings.muted;
+  localStorage.setItem('ch_muted', settings.muted);
+  updateVolumeUI();
+  if (!settings.muted) playSound('bubble');
+});
 
 /* ════════════════════════════════
    TAB NAVIGATION
@@ -14,7 +377,8 @@ tabBtns.forEach(btn => {
     const target = btn.dataset.tab;
     tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === target));
     tabContents.forEach(c => c.classList.toggle('hidden', c.id !== `tab-content-${target}`));
-    
+    playSound('click');
+
     // Stop timing game and reset active round UI if leaving tab during a run
     if (target !== 'timing') {
       if (tmState.running) {
@@ -22,7 +386,7 @@ tabBtns.forEach(btn => {
         btnTmGo.style.display = '';
         btnTmStop.disabled = true;
         btnTmStop.classList.remove('active');
-        tmHint.textContent = 'Нажми Start (или Пробел) чтобы запустить таймер';
+        tmHint.textContent = t('tm_hint_start');
         tmClock.textContent = '0:00';
         tmBarFill.style.width = '0%';
       }
@@ -81,7 +445,6 @@ const tsResIcon      = document.getElementById('ts-res-icon');
 const tsResTitle     = document.getElementById('ts-res-title');
 const tsResSub       = document.getElementById('ts-res-sub');
 
-/* ── Typing helpers ── */
 function tsCPS(chars, ms) { return ms ? (chars / (ms / 1000)).toFixed(2) : 0; }
 function tsWPM(chars, ms) { return ms ? Math.round((chars / 5) / (ms / 60000)) : 0; }
 
@@ -117,12 +480,12 @@ function tsRender(target, typed) {
 }
 
 function tsRating(cps, chars) {
-  if (chars < 4) return { icon: '🤔', title: 'Маловато символов', text: 'Попробуй текст подлиннее — будет точнее!' };
-  if (cps < 2)  return { icon: '🐢', title: 'Медленно',   text: 'Практика сделает своё дело. Не сдавайся!' };
-  if (cps < 4)  return { icon: '🚶', title: 'Средне',     text: 'Уже неплохо. Ещё немного тренировок!' };
-  if (cps < 6)  return { icon: '🚴', title: 'Хорошо!',   text: 'Уверенная скорость. Ты явно не новичок.' };
-  if (cps < 9)  return { icon: '⚡', title: 'Быстро!',   text: 'Отличный результат. Пальцы летают!' };
-  return               { icon: '🚀', title: 'Реактивный!', text: 'Невероятная скорость. Ты точно практикуешься!' };
+  if (chars < 4) return { icon: '🤔', title: t('rate_too_short'), text: t('rate_too_short_desc') };
+  if (cps < 2)  return { icon: '🐢', title: t('rate_slow'),      text: t('rate_slow_desc') };
+  if (cps < 4)  return { icon: '🚶', title: t('rate_medium'),    text: t('rate_medium_desc') };
+  if (cps < 6)  return { icon: '🚴', title: t('rate_good'),      text: t('rate_good_desc') };
+  if (cps < 9)  return { icon: '⚡', title: t('rate_fast'),      text: t('rate_fast_desc') };
+  return               { icon: '🚀', title: t('rate_insane'),    text: t('rate_insane_desc') };
 }
 
 /* ── Typing: setup ── */
@@ -133,12 +496,14 @@ tsBtnClear.addEventListener('click', () => {
   tsTargetInput.value = '';
   tsBtnClear.classList.remove('vis');
   tsTargetInput.focus();
+  playSound('click');
 });
 tsChips.forEach(c => {
   c.addEventListener('click', () => {
     tsTargetInput.value = c.dataset.val;
     tsBtnClear.classList.add('vis');
     tsTargetInput.focus();
+    playSound('bubble');
   });
 });
 tsBtnStart.addEventListener('click', tsStartTest);
@@ -152,6 +517,7 @@ function tsStartTest() {
     tsTargetInput.focus();
     return;
   }
+  playSound('click');
   tsState.target  = val;
   tsState.startTime = null;
   tsState.endTime   = null;
@@ -167,7 +533,7 @@ function tsStartTest() {
   tsTypingInput.disabled     = false;
   tsTypingInput.className    = 'glass-input mono';
   tsHint.style.opacity       = '1';
-  tsHint.textContent         = '⏱ Таймер стартует с первого символа';
+  tsHint.textContent         = t('ts_hint_init');
 
   tsRender(val, '');
   showPanel(tsPanels, 'ts-test');
@@ -200,11 +566,11 @@ function tsTimerStop() {
 /* ── Typing: input & paste protection ── */
 tsTypingInput.addEventListener('paste', (e) => {
   e.preventDefault();
-  tsHint.textContent = '⚠️ Вставка текста отключена — вводи вручную!';
+  tsHint.textContent = t('ts_paste_blocked');
   tsHint.style.opacity = '1';
   setTimeout(() => {
     if (tsState.running) tsHint.style.opacity = '0';
-    else tsHint.textContent = '⏱ Таймер стартует с первого символа';
+    else tsHint.textContent = t('ts_hint_init');
   }, 1500);
 });
 
@@ -221,9 +587,10 @@ tsTypingInput.addEventListener('input', () => {
   tsStatProgress.textContent = pct + '%';
   tsProgFill.style.width     = pct + '%';
 
-  // Fix: Error is present if typed string doesn't match target prefix
   const hasErr = !target.startsWith(typed);
   tsTypingInput.classList.toggle('err', hasErr);
+
+  playSound(hasErr ? 'click' : 'bubble');
 
   if (correct === target.length) tsFinish();
 });
@@ -234,6 +601,7 @@ function tsFinish() {
   tsTypingInput.disabled  = true;
   tsTypingInput.classList.remove('err');
   tsTypingInput.classList.add('done');
+  playSound('win');
 
   const elapsed = Math.max(10, tsState.endTime - tsState.startTime);
   const chars   = tsState.target.length;
@@ -244,7 +612,7 @@ function tsFinish() {
   tsResIcon.textContent  = rating.icon;
   tsResTitle.textContent = rating.title;
   tsResSub.textContent   = rating.text;
-  tsResTime.textContent  = fmt(elapsed) + 'с';
+  tsResTime.textContent  = fmt(elapsed) + (settings.lang === 'ru' ? 'с' : 's');
   tsResCps.textContent   = cps;
   tsResWpm.textContent   = wpm;
   tsResChars.textContent = chars;
@@ -260,6 +628,7 @@ tsBtnNew.addEventListener('click', () => {
   tsState.done    = false;
   showPanel(tsPanels, 'ts-setup');
   setTimeout(() => tsTargetInput.focus(), 50);
+  playSound('click');
 });
 
 /* ════════════════════════════════════════════════════════
@@ -309,29 +678,28 @@ const anRating       = document.getElementById('an-rating');
 const tmFinalIcon    = document.getElementById('tm-final-icon');
 const btnTmReplay    = document.getElementById('btn-tm-replay');
 
-/* ── Format for timing display: "s:cc" (centiseconds) ── */
+/* Format for timing display: "s:cc" (centiseconds) */
 function tmFmt(ms) {
   const s  = Math.floor(ms / 1000);
   const cc = Math.floor((ms % 1000) / 10);
   return `${s}:${String(cc).padStart(2, '0')}`;
 }
 
-/* ── Generate random target in exact 10ms steps (1.00s .. 8.99s) ── */
+/* Generate random target in exact 10ms steps (1.00s .. 8.99s) */
 function tmRandomTarget() {
   return 1000 + Math.floor(Math.random() * 800) * 10;
 }
 
-/* ── Stop/cleanup interval ── */
 function tmStop() {
   clearInterval(tmState.interval);
   tmState.running = false;
 }
 
-/* ── Start sequence ── */
 btnTmStart.addEventListener('click', tmBeginGame);
 btnTmReplay.addEventListener('click', tmBeginGame);
 
 function tmBeginGame() {
+  playSound('click');
   tmState.round  = 0;
   tmState.rounds = [];
   tmBeginRound();
@@ -345,7 +713,7 @@ function tmBeginRound() {
   tmState.pressedMs = null;
   tmState.running   = false;
 
-  tmRoundBadge.textContent = `Раунд ${tmState.round} / ${TM_ROUNDS}`;
+  tmRoundBadge.textContent = `${t('round_prefix')} ${tmState.round} / ${TM_ROUNDS}`;
   tmTargetTime.textContent = tmFmt(tmState.targetMs);
   tmClock.textContent      = '0:00';
   tmBarFill.style.width    = '0%';
@@ -353,7 +721,7 @@ function tmBeginRound() {
   btnTmGo.style.display   = '';
   btnTmStop.disabled      = true;
   btnTmStop.classList.remove('active');
-  tmHint.textContent      = 'Нажми Start (или Пробел) чтобы запустить таймер';
+  tmHint.textContent      = t('tm_hint_start');
 
   showPanel(tmPanels, 'tm-round');
 }
@@ -361,10 +729,11 @@ function tmBeginRound() {
 btnTmGo.addEventListener('click', tmLaunch);
 
 function tmLaunch() {
+  playSound('bubble');
   btnTmGo.style.display = 'none';
   btnTmStop.disabled    = false;
   btnTmStop.classList.add('active');
-  tmHint.textContent    = 'Нажми STOP (или Пробел) в нужный момент!';
+  tmHint.textContent    = t('tm_hint_running');
 
   tmState.startTime = performance.now();
   tmState.running   = true;
@@ -374,7 +743,6 @@ function tmLaunch() {
     const elapsed = performance.now() - tmState.startTime;
 
     if (elapsed >= TM_DURATION) {
-      // Missed — treat as pressing at 10s
       tmRegisterPress(TM_DURATION);
       return;
     }
@@ -425,15 +793,15 @@ document.addEventListener('keydown', (e) => {
 
 function tmRegisterPress(elapsed) {
   tmStop();
+  playSound('stop');
   btnTmStop.disabled = true;
   btnTmStop.classList.remove('active');
 
-  // Freeze bar at press moment
   const clampedElapsed = Math.min(elapsed, TM_DURATION);
   tmBarFill.style.width = ((clampedElapsed / TM_DURATION) * 100) + '%';
   tmClock.textContent   = tmFmt(clampedElapsed);
 
-  const diff = Math.round(elapsed - tmState.targetMs); // positive = late, negative = early
+  const diff = Math.round(elapsed - tmState.targetMs);
   const absDiff = Math.abs(diff);
 
   tmState.rounds.push({
@@ -444,17 +812,16 @@ function tmRegisterPress(elapsed) {
     absDiff:   absDiff,
   });
 
-  // Show round result
   setTimeout(() => tmShowRoundResult(diff, absDiff), 250);
 }
 
 function tmRoundRating(absDiff) {
-  if (absDiff < 30)  return { icon: '🎯', title: 'Идеально!',   color: 'var(--green)' };
-  if (absDiff < 80)  return { icon: '✨', title: 'Отлично!',    color: 'var(--green)' };
-  if (absDiff < 160) return { icon: '👍', title: 'Хорошо',      color: 'var(--ac)' };
-  if (absDiff < 300) return { icon: '😐', title: 'Неплохо',     color: 'var(--yellow)' };
-  if (absDiff < 500) return { icon: '😬', title: 'Промах',      color: 'var(--yellow)' };
-  return                    { icon: '💀', title: 'Мимо кассы',  color: 'var(--red)' };
+  if (absDiff < 30)  return { icon: '🎯', title: t('tm_r_perfect'), color: 'var(--green)' };
+  if (absDiff < 80)  return { icon: '✨', title: t('tm_r_great'),   color: 'var(--green)' };
+  if (absDiff < 160) return { icon: '👍', title: t('tm_r_good'),    color: 'var(--ac-vibrant)' };
+  if (absDiff < 300) return { icon: '😐', title: t('tm_r_decent'),  color: 'var(--yellow)' };
+  if (absDiff < 500) return { icon: '😬', title: t('tm_r_miss'),    color: 'var(--yellow)' };
+  return                    { icon: '💀', title: t('tm_r_fail'),    color: 'var(--red)' };
 }
 
 function tmShowRoundResult(diff, absDiff) {
@@ -463,20 +830,17 @@ function tmShowRoundResult(diff, absDiff) {
   tmRrTitle.textContent = r.title;
 
   const sign = diff > 0 ? '+' : '';
-  tmRrDiff.textContent  = `Отклонение: ${sign}${diff} мс`;
+  const msUnit = settings.lang === 'ru' ? 'мс' : 'ms';
+  tmRrDiff.textContent  = `${t('diff_lbl')}: ${sign}${diff} ${msUnit}`;
 
-  // Accuracy bar: center = perfect. Range ±500ms
   const MAX = 500;
   const clamped = Math.max(-MAX, Math.min(MAX, diff));
-  // Fill from center outward
-  const center   = 50; // %
+  const center   = 50;
   const fillPct  = (Math.abs(clamped) / MAX) * 50;
   if (diff < 0) {
-    // Early — fill from (center-fillPct) to center
     tmRrBar.style.left   = (center - fillPct) + '%';
     tmRrBar.style.width  = fillPct + '%';
   } else {
-    // Late — fill from center to (center+fillPct)
     tmRrBar.style.left   = center + '%';
     tmRrBar.style.width  = fillPct + '%';
   }
@@ -486,6 +850,7 @@ function tmShowRoundResult(diff, absDiff) {
 }
 
 btnTmNext.addEventListener('click', () => {
+  playSound('click');
   if (tmState.round < TM_ROUNDS) {
     tmBeginRound();
   } else {
@@ -495,10 +860,10 @@ btnTmNext.addEventListener('click', () => {
 
 /* ── Analytics ── */
 function tmShowAnalytics() {
+  playSound('win');
   const rounds = tmState.rounds;
-
-  // Build round rows
   anRounds.innerHTML = '';
+  const msUnit = settings.lang === 'ru' ? 'мс' : 'ms';
 
   rounds.forEach(r => {
     const rating = tmRoundRating(r.absDiff);
@@ -512,28 +877,26 @@ function tmShowAnalytics() {
       <div class="an-bar-mini-wrap">
         <div class="an-bar-mini" style="width:${pct}%;background:${rating.color}"></div>
       </div>
-      <span class="an-diff" style="color:${rating.color}">${sign}${r.diff}мс</span>
+      <span class="an-diff" style="color:${rating.color}">${sign}${r.diff}${msUnit}</span>
       <span class="an-pct">${pct}%</span>
     `;
     anRounds.appendChild(row);
   });
 
-  // Summary
   const avgDiff  = Math.round(rounds.reduce((s, r) => s + r.absDiff, 0) / rounds.length);
   const bestDiff = Math.min(...rounds.map(r => r.absDiff));
   const accuracy = Math.max(0, Math.round(100 - (avgDiff / 500) * 100));
 
-  anAvg.textContent   = avgDiff + 'мс';
-  anBest.textContent  = bestDiff + 'мс';
+  anAvg.textContent   = avgDiff + msUnit;
+  anBest.textContent  = bestDiff + msUnit;
   anScore.textContent = accuracy + '%';
 
-  // Overall rating
   let finalRating;
-  if (accuracy >= 94)      finalRating = { icon: '🏆', title: 'Легендарно!',  text: 'Реакция как у машины. Невероятно.' };
-  else if (accuracy >= 85) finalRating = { icon: '🎯', title: 'Снайпер!',     text: 'Отличная точность и чувство времени.' };
-  else if (accuracy >= 70) finalRating = { icon: '✨', title: 'Хорошо!',      text: 'Стабильный результат. Можно лучше!' };
-  else if (accuracy >= 50) finalRating = { icon: '👀', title: 'Средне',       text: 'Ещё немного практики — и будет огонь.' };
-  else                     finalRating = { icon: '🐢', title: 'Тренируйся!',  text: 'Чувство ритма нарабатывается. Не сдавайся!' };
+  if (accuracy >= 94)      finalRating = { icon: '🏆', title: t('fin_legend'), text: t('fin_legend_desc') };
+  else if (accuracy >= 85) finalRating = { icon: '🎯', title: t('fin_sniper'), text: t('fin_sniper_desc') };
+  else if (accuracy >= 70) finalRating = { icon: '✨', title: t('fin_good'),   text: t('fin_good_desc') };
+  else if (accuracy >= 50) finalRating = { icon: '👀', title: t('fin_medium'), text: t('fin_medium_desc') };
+  else                     finalRating = { icon: '🐢', title: t('fin_train'),  text: t('fin_train_desc') };
 
   tmFinalIcon.textContent = finalRating.icon;
   anRating.innerHTML = `<strong>${finalRating.title}</strong> — ${finalRating.text}`;
@@ -542,7 +905,9 @@ function tmShowAnalytics() {
 }
 
 /* ════════════════════════════════
-   INIT
+   INITIALIZATION
 ════════════════════════════════ */
+updateLanguage(settings.lang);
+updateVolumeUI();
 showPanel(tsPanels, 'ts-setup');
 showPanel(tmPanels, 'tm-intro');

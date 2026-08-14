@@ -25,24 +25,76 @@
 
   <div class="app">
 
-    <!-- Header + Nav -->
+    <!-- Header + Nav + Settings -->
     <header class="header">
-      <div class="logo">
-        <span class="logo-icon">◈</span>
-        <span class="logo-text">ChallengeHub</span>
+      <div class="header-top">
+        <div class="logo">
+          <span class="logo-icon">◈</span>
+          <span class="logo-text">ChallengeHub</span>
+        </div>
+        <button class="btn-settings" id="btn-settings" title="Настройки / Settings" aria-label="Settings">
+          <span class="settings-icon">⚙</span>
+        </button>
       </div>
 
       <nav class="tab-nav" role="tablist">
         <button class="tab-btn active" id="tab-typing" role="tab" aria-selected="true" data-tab="typing">
           <span class="tab-icon">⌨</span>
-          <span>Typing</span>
+          <span data-i18n="tab_typing">Typing</span>
         </button>
         <button class="tab-btn" id="tab-timing" role="tab" aria-selected="false" data-tab="timing">
           <span class="tab-icon">⏱</span>
-          <span>Timing</span>
+          <span data-i18n="tab_timing">Timing</span>
         </button>
       </nav>
     </header>
+
+    <!-- Settings Liquid Glass Modal -->
+    <div class="modal-backdrop hidden" id="modal-settings-backdrop">
+      <div class="glass-card settings-modal" id="modal-settings">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="modal-icon">⚙</span>
+            <h2 class="modal-title" data-i18n="settings_title">Настройки</h2>
+          </div>
+          <button class="btn-icon-modal" id="btn-close-settings" title="Закрыть">✕</button>
+        </div>
+
+        <div class="settings-group">
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-label" data-i18n="setting_lang_label">Язык интерфейса</span>
+              <span class="setting-desc" data-i18n="setting_lang_desc">Русский / English</span>
+            </div>
+            <div class="lang-switch">
+              <button class="lang-btn active" id="lang-ru" data-lang="ru">RU</button>
+              <button class="lang-btn" id="lang-en" data-lang="en">EN</button>
+            </div>
+          </div>
+
+          <div class="setting-divider"></div>
+
+          <div class="setting-item setting-column">
+            <div class="setting-info-row">
+              <div class="setting-info">
+                <span class="setting-label" data-i18n="setting_vol_label">Громкость звуков</span>
+                <span class="setting-desc" data-i18n="setting_vol_desc">Звуковые эффекты игры</span>
+              </div>
+              <span class="vol-value" id="vol-value-display">80%</span>
+            </div>
+            
+            <div class="volume-control">
+              <button class="btn-mute" id="btn-mute" title="Без звука">
+                <span class="vol-icon" id="vol-icon">🔊</span>
+              </button>
+              <input type="range" class="liquid-slider" id="vol-slider" min="0" max="100" value="80" />
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btn-save-settings" style="margin-top:20px" data-i18n="btn_done">Готово</button>
+      </div>
+    </div>
 
     <!-- ══════════════ TYPING TAB ══════════════ -->
     <div class="tab-content" id="tab-content-typing">
@@ -50,21 +102,22 @@
       <!-- Setup -->
       <section class="panel" id="ts-setup">
         <div class="glass-card">
-          <h1 class="card-title">Что набираем?</h1>
-          <p class="card-desc">Любой текст, пароль, фраза — таймер стартует с первого символа и останавливается на последнем правильном.</p>
+          <h1 class="card-title" data-i18n="ts_setup_title">Что набираем?</h1>
+          <p class="card-desc" data-i18n="ts_setup_desc">Любой текст, пароль, фраза — таймер стартует с первого символа и останавливается на последнем правильном.</p>
 
           <div class="field">
-            <label class="field-label" for="target-input">Целевой текст</label>
+            <label class="field-label" for="target-input" data-i18n="ts_target_label">Целевой текст</label>
             <div class="input-wrap">
               <input id="target-input" class="glass-input" type="text"
                 placeholder="например: 1234 или Hello World!"
+                data-i18n-ph="ts_target_ph"
                 autocomplete="off" spellcheck="false" />
               <button class="btn-icon" id="btn-clear" title="Очистить">✕</button>
             </div>
           </div>
 
           <div class="chips">
-            <span class="chips-label">Быстрый выбор:</span>
+            <span class="chips-label" data-i18n="chips_quick_select">Быстрый выбор:</span>
             <button class="chip" data-val="1234">1234</button>
             <button class="chip" data-val="qwerty">qwerty</button>
             <button class="chip" data-val="password123">password123</button>
@@ -72,7 +125,7 @@
             <button class="chip" data-val="abcdefghij">abcdefghij</button>
           </div>
 
-          <button class="btn-primary" id="btn-ts-start">Начать тест →</button>
+          <button class="btn-primary" id="btn-ts-start" data-i18n="btn_start_test">Начать тест →</button>
         </div>
       </section>
 
@@ -82,15 +135,15 @@
           <div class="stats-row">
             <div class="stat-box">
               <span class="stat-val" id="ts-time">0.000</span>
-              <span class="stat-lbl">секунд</span>
+              <span class="stat-lbl" data-i18n="lbl_seconds">секунд</span>
             </div>
             <div class="stat-box">
               <span class="stat-val" id="ts-cps">—</span>
-              <span class="stat-lbl">симв/с</span>
+              <span class="stat-lbl" data-i18n="lbl_cps">симв/с</span>
             </div>
             <div class="stat-box">
               <span class="stat-val" id="ts-progress">0%</span>
-              <span class="stat-lbl">прогресс</span>
+              <span class="stat-lbl" data-i18n="lbl_progress">прогресс</span>
             </div>
           </div>
 
@@ -101,11 +154,12 @@
           <div class="field">
             <input id="typing-input" class="glass-input mono" type="text"
               placeholder="Начни вводить здесь…"
+              data-i18n-ph="ts_typing_ph"
               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            <div class="hint" id="ts-hint">⏱ Таймер стартует с первого символа</div>
+            <div class="hint" id="ts-hint" data-i18n="ts_hint_init">⏱ Таймер стартует с первого символа</div>
           </div>
 
-          <button class="btn-ghost" id="btn-ts-restart">↩ Начать заново</button>
+          <button class="btn-ghost" id="btn-ts-restart" data-i18n="btn_restart">↩ Начать заново</button>
         </div>
       </section>
 
@@ -113,17 +167,17 @@
       <section class="panel hidden" id="ts-result">
         <div class="glass-card result-card">
           <div class="result-emoji" id="ts-res-icon">🎉</div>
-          <h2 class="result-title" id="ts-res-title">Готово!</h2>
+          <h2 class="result-title" id="ts-res-title" data-i18n="ts_res_title_done">Готово!</h2>
           <p class="result-sub" id="ts-res-sub"></p>
 
           <div class="result-grid">
             <div class="result-cell">
               <span class="result-big" id="ts-r-time">—</span>
-              <span class="result-lbl">Время</span>
+              <span class="result-lbl" data-i18n="res_lbl_time">Время</span>
             </div>
             <div class="result-cell">
               <span class="result-big" id="ts-r-cps">—</span>
-              <span class="result-lbl">симв/с</span>
+              <span class="result-lbl" data-i18n="lbl_cps">симв/с</span>
             </div>
             <div class="result-cell">
               <span class="result-big" id="ts-r-wpm">—</span>
@@ -131,13 +185,13 @@
             </div>
             <div class="result-cell">
               <span class="result-big" id="ts-r-chars">—</span>
-              <span class="result-lbl">Символов</span>
+              <span class="result-lbl" data-i18n="res_lbl_chars">Символов</span>
             </div>
           </div>
 
           <div class="actions">
-            <button class="btn-primary" id="btn-ts-retry">Повторить</button>
-            <button class="btn-ghost" id="btn-ts-new">Новый текст</button>
+            <button class="btn-primary" id="btn-ts-retry" data-i18n="btn_retry">Повторить</button>
+            <button class="btn-ghost" id="btn-ts-new" data-i18n="btn_new_text">Новый текст</button>
           </div>
         </div>
       </section>
@@ -151,18 +205,18 @@
       <!-- Intro -->
       <section class="panel" id="tm-intro">
         <div class="glass-card">
-          <h1 class="card-title">Timing Challenge</h1>
-          <p class="card-desc">Таймер идёт от 0 до 10 секунд. Тебе покажут случайный момент — нажми кнопку точно в этот момент. Три раунда, потом аналитика.</p>
+          <h1 class="card-title" data-i18n="tm_title">Timing Challenge</h1>
+          <p class="card-desc" data-i18n="tm_desc">Таймер идёт от 0 до 10 секунд. Тебе покажут случайный момент — нажми кнопку точно в этот момент. Три раунда, потом аналитика.</p>
 
           <div class="tm-preview">
             <div class="tm-preview-target">
-              <span class="preview-label">Цель</span>
+              <span class="preview-label" data-i18n="tm_target_preview_lbl">Цель</span>
               <span class="preview-time">5:56</span>
             </div>
-            <p class="preview-hint">Нажми STOP когда таймер покажет это время</p>
+            <p class="preview-hint" data-i18n="tm_preview_hint">Нажми STOP когда таймер покажет это время</p>
           </div>
 
-          <button class="btn-primary" id="btn-tm-start">Начать игру →</button>
+          <button class="btn-primary" id="btn-tm-start" data-i18n="btn_start_game">Начать игру →</button>
         </div>
       </section>
 
@@ -176,7 +230,7 @@
 
           <!-- Target time -->
           <div class="tm-target-wrap">
-            <p class="tm-target-label">Попади в момент</p>
+            <p class="tm-target-label" data-i18n="tm_target_lbl">Попади в момент</p>
             <div class="tm-target-time" id="tm-target-time">—:——</div>
           </div>
 
@@ -189,8 +243,8 @@
           </div>
 
           <button class="btn-stop" id="btn-tm-stop" disabled>STOP</button>
-          <div class="hint" id="tm-hint">Нажми Start чтобы запустить таймер</div>
-          <button class="btn-primary" id="btn-tm-go" style="margin-top:8px">▶ Start</button>
+          <div class="hint" id="tm-hint" data-i18n="tm_hint_start">Нажми Start (или Пробел) чтобы запустить таймер</div>
+          <button class="btn-primary" id="btn-tm-go" style="margin-top:8px" data-i18n="btn_start_timer">▶ Start</button>
         </div>
       </section>
 
@@ -206,10 +260,10 @@
               <div class="tm-accuracy-marker"></div>
             </div>
             <div class="tm-accuracy-labels">
-              <span>−500мс</span><span>Идеал</span><span>+500мс</span>
+              <span>−500ms</span><span data-i18n="tm_ideal">Идеал</span><span>+500ms</span>
             </div>
           </div>
-          <button class="btn-primary" id="btn-tm-next">Следующий раунд →</button>
+          <button class="btn-primary" id="btn-tm-next" data-i18n="btn_next_round">Следующий раунд →</button>
         </div>
       </section>
 
@@ -217,30 +271,30 @@
       <section class="panel hidden" id="tm-analytics">
         <div class="glass-card">
           <div class="result-emoji" id="tm-final-icon">📊</div>
-          <h2 class="result-title">Результаты</h2>
-          <p class="result-sub">3 раунда завершены</p>
+          <h2 class="result-title" data-i18n="tm_analytics_title">Результаты</h2>
+          <p class="result-sub" data-i18n="tm_rounds_done">3 раунда завершены</p>
 
           <div class="analytics-rounds" id="analytics-rounds"></div>
 
           <div class="analytics-summary">
             <div class="summary-cell">
               <span class="summary-val" id="an-avg">—</span>
-              <span class="summary-lbl">Среднее отклонение</span>
+              <span class="summary-lbl" data-i18n="an_avg_lbl">Среднее отклонение</span>
             </div>
             <div class="summary-cell">
               <span class="summary-val" id="an-best">—</span>
-              <span class="summary-lbl">Лучший раунд</span>
+              <span class="summary-lbl" data-i18n="an_best_lbl">Лучший раунд</span>
             </div>
             <div class="summary-cell">
               <span class="summary-val" id="an-score">—</span>
-              <span class="summary-lbl">Точность</span>
+              <span class="summary-lbl" data-i18n="an_score_lbl">Точность</span>
             </div>
           </div>
 
           <div class="rating-box" id="an-rating"></div>
 
           <div class="actions">
-            <button class="btn-primary" id="btn-tm-replay">Сыграть снова</button>
+            <button class="btn-primary" id="btn-tm-replay" data-i18n="btn_replay">Сыграть снова</button>
           </div>
         </div>
       </section>
