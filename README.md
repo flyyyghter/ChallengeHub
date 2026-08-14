@@ -16,4 +16,5 @@ Open `index.html` in any browser. No build step, no dependencies.
 
 ---
 
-*Built by Claude Sonnet 4.6 in a single prompt, just for fun.*
+*Навайбкодено с Gemini 3.7 Flash, just for fun.*
+

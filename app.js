@@ -190,8 +190,9 @@ const settings = {
   muted: localStorage.getItem('ch_muted') === 'true',
 };
 
-// Web Audio Liquid Synthesizer
+// Web Audio Liquid Synthesizer & Sound File Loader
 let audioCtx = null;
+let clickAudioBuffer = null;
 
 function getAudioContext() {
   if (!audioCtx) {
@@ -204,6 +205,25 @@ function getAudioContext() {
   return audioCtx;
 }
 
+// Preload sound.wav into memory for zero-latency button clicks
+async function loadClickSound() {
+  try {
+    const response = await fetch('sound.wav');
+    const arrayBuffer = await response.arrayBuffer();
+    const ctx = getAudioContext();
+    if (ctx) {
+      ctx.decodeAudioData(arrayBuffer, (decoded) => {
+        clickAudioBuffer = decoded;
+      }, (err) => {
+        // decoding error fallback
+      });
+    }
+  } catch (e) {
+    // Audio element fallback handles file:// or offline protocols
+  }
+}
+loadClickSound();
+
 function playSound(type) {
   if (settings.muted || settings.volume <= 0) return;
   try {
@@ -212,9 +232,25 @@ function playSound(type) {
 
     const gain = ctx.createGain();
     const now = ctx.currentTime;
-    const vol = (settings.volume / 100) * 0.15;
+    const vol = (settings.volume / 100) * 0.35;
     gain.gain.setValueAtTime(vol, now);
     gain.connect(ctx.destination);
+
+    if (type === 'click') {
+      // Use uploaded sound.wav for button clicks
+      if (clickAudioBuffer) {
+        const source = ctx.createBufferSource();
+        source.buffer = clickAudioBuffer;
+        source.connect(gain);
+        source.start(now);
+      } else {
+        // Instant HTML5 Audio fallback
+        const audio = new Audio('sound.wav');
+        audio.volume = Math.min(1, Math.max(0, (settings.volume / 100)));
+        audio.play().catch(() => {});
+      }
+      return;
+    }
 
     const osc = ctx.createOscillator();
     osc.connect(gain);
@@ -227,12 +263,6 @@ function playSound(type) {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
       osc.start(now);
       osc.stop(now + 0.09);
-    } else if (type === 'click') {
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(600, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-      osc.start(now);
-      osc.stop(now + 0.04);
     } else if (type === 'stop') {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(520, now);
