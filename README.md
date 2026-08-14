@@ -28,4 +28,4 @@ A 30-second rapid-fire mental arithmetic sprint!
 
 ---
 
-*Навайбкодено с Gemini 3.7 Flash, just for fun.*
+*fully vibe-coded with Gemini 3.7 Flash, just for fun.*
