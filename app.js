@@ -14,8 +14,19 @@ tabBtns.forEach(btn => {
     const target = btn.dataset.tab;
     tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === target));
     tabContents.forEach(c => c.classList.toggle('hidden', c.id !== `tab-content-${target}`));
-    // Stop timing game if switching away
-    if (target !== 'timing') tmStop();
+    
+    // Stop timing game and reset active round UI if leaving tab during a run
+    if (target !== 'timing') {
+      if (tmState.running) {
+        tmStop();
+        btnTmGo.style.display = '';
+        btnTmStop.disabled = true;
+        btnTmStop.classList.remove('active');
+        tmHint.textContent = 'Нажми Start (или Пробел) чтобы запустить таймер';
+        tmClock.textContent = '0:00';
+        tmBarFill.style.width = '0%';
+      }
+    }
   });
 });
 
@@ -84,23 +95,29 @@ function tsCountCorrect(target, typed) {
 
 function tsRender(target, typed) {
   tsTargetDisp.innerHTML = '';
-  let cursorSet = false;
   [...target].forEach((ch, i) => {
     const sp = document.createElement('span');
     sp.className = 'char';
     sp.textContent = ch === ' ' ? '\u00A0' : ch;
+    
     if (i < typed.length) {
       sp.classList.add(typed[i] === ch ? 'correct' : 'wrong');
     } else {
       sp.classList.add('pending');
     }
-    if (i === typed.length && !cursorSet) { sp.classList.add('cursor'); cursorSet = true; }
+
+    if (typed.length === 0 && i === 0) {
+      sp.classList.add('cursor-before');
+    } else if (typed.length > 0 && i === typed.length - 1) {
+      sp.classList.add('cursor-after');
+    }
+
     tsTargetDisp.appendChild(sp);
   });
 }
 
 function tsRating(cps, chars) {
-  if (chars < 4) return { icon: '🤔', title: 'Маловато символов', text: 'Попробуй текст подлиннее — будет честнее!' };
+  if (chars < 4) return { icon: '🤔', title: 'Маловато символов', text: 'Попробуй текст подлиннее — будет точнее!' };
   if (cps < 2)  return { icon: '🐢', title: 'Медленно',   text: 'Практика сделает своё дело. Не сдавайся!' };
   if (cps < 4)  return { icon: '🚶', title: 'Средне',     text: 'Уже неплохо. Ещё немного тренировок!' };
   if (cps < 6)  return { icon: '🚴', title: 'Хорошо!',   text: 'Уверенная скорость. Ты явно не новичок.' };
@@ -129,7 +146,7 @@ tsTargetInput.addEventListener('keydown', e => { if (e.key === 'Enter') tsStartT
 
 function tsStartTest() {
   const val = tsTargetInput.value.trim();
-  if (!val) {
+  if (!val || val.length < 2) {
     tsTargetInput.classList.add('err');
     setTimeout(() => tsTargetInput.classList.remove('err'), 600);
     tsTargetInput.focus();
@@ -180,7 +197,17 @@ function tsTimerStop() {
   tsStatTime.classList.remove('running');
 }
 
-/* ── Typing: input ── */
+/* ── Typing: input & paste protection ── */
+tsTypingInput.addEventListener('paste', (e) => {
+  e.preventDefault();
+  tsHint.textContent = '⚠️ Вставка текста отключена — вводи вручную!';
+  tsHint.style.opacity = '1';
+  setTimeout(() => {
+    if (tsState.running) tsHint.style.opacity = '0';
+    else tsHint.textContent = '⏱ Таймер стартует с первого символа';
+  }, 1500);
+});
+
 tsTypingInput.addEventListener('input', () => {
   if (tsState.done) return;
   const typed  = tsTypingInput.value;
@@ -194,7 +221,8 @@ tsTypingInput.addEventListener('input', () => {
   tsStatProgress.textContent = pct + '%';
   tsProgFill.style.width     = pct + '%';
 
-  const hasErr = typed.length > 0 && typed[typed.length - 1] !== target[typed.length - 1];
+  // Fix: Error is present if typed string doesn't match target prefix
+  const hasErr = !target.startsWith(typed);
   tsTypingInput.classList.toggle('err', hasErr);
 
   if (correct === target.length) tsFinish();
@@ -207,7 +235,7 @@ function tsFinish() {
   tsTypingInput.classList.remove('err');
   tsTypingInput.classList.add('done');
 
-  const elapsed = tsState.endTime - tsState.startTime;
+  const elapsed = Math.max(10, tsState.endTime - tsState.startTime);
   const chars   = tsState.target.length;
   const cps     = parseFloat(tsCPS(chars, elapsed));
   const wpm     = tsWPM(chars, elapsed);
@@ -288,10 +316,9 @@ function tmFmt(ms) {
   return `${s}:${String(cc).padStart(2, '0')}`;
 }
 
-/* ── Generate random target (1s .. 8.99s) ── */
+/* ── Generate random target in exact 10ms steps (1.00s .. 8.99s) ── */
 function tmRandomTarget() {
-  // avoid the very start/end so it's fair
-  return 1000 + Math.floor(Math.random() * 7990);
+  return 1000 + Math.floor(Math.random() * 800) * 10;
 }
 
 /* ── Stop/cleanup interval ── */
@@ -323,12 +350,10 @@ function tmBeginRound() {
   tmClock.textContent      = '0:00';
   tmBarFill.style.width    = '0%';
 
-  // Position the target marker - removed (challenge mode!)
-
   btnTmGo.style.display   = '';
   btnTmStop.disabled      = true;
   btnTmStop.classList.remove('active');
-  tmHint.textContent      = 'Нажми Start чтобы запустить таймер';
+  tmHint.textContent      = 'Нажми Start (или Пробел) чтобы запустить таймер';
 
   showPanel(tmPanels, 'tm-round');
 }
@@ -339,7 +364,7 @@ function tmLaunch() {
   btnTmGo.style.display = 'none';
   btnTmStop.disabled    = false;
   btnTmStop.classList.add('active');
-  tmHint.textContent    = 'Нажми STOP в нужный момент!';
+  tmHint.textContent    = 'Нажми STOP (или Пробел) в нужный момент!';
 
   tmState.startTime = performance.now();
   tmState.running   = true;
@@ -364,6 +389,38 @@ btnTmStop.addEventListener('click', () => {
   if (!tmState.running || btnTmStop.disabled) return;
   const elapsed = performance.now() - tmState.startTime;
   tmRegisterPress(elapsed);
+});
+
+/* Keyboard controls (Space / Enter) for Timing game */
+document.addEventListener('keydown', (e) => {
+  const isTimingTab = !document.getElementById('tab-content-timing').classList.contains('hidden');
+  if (!isTimingTab) return;
+
+  if (e.code === 'Space' || e.key === ' ' || e.key === 'Enter') {
+    const roundPanel = document.getElementById('tm-round');
+    const roundResultPanel = document.getElementById('tm-round-result');
+    const introPanel = document.getElementById('tm-intro');
+    const analyticsPanel = document.getElementById('tm-analytics');
+
+    if (!roundPanel.classList.contains('hidden')) {
+      e.preventDefault();
+      if (!tmState.running && btnTmGo.style.display !== 'none') {
+        tmLaunch();
+      } else if (tmState.running && !btnTmStop.disabled) {
+        const elapsed = performance.now() - tmState.startTime;
+        tmRegisterPress(elapsed);
+      }
+    } else if (!roundResultPanel.classList.contains('hidden')) {
+      e.preventDefault();
+      btnTmNext.click();
+    } else if (!introPanel.classList.contains('hidden')) {
+      e.preventDefault();
+      btnTmStart.click();
+    } else if (!analyticsPanel.classList.contains('hidden')) {
+      e.preventDefault();
+      btnTmReplay.click();
+    }
+  }
 });
 
 function tmRegisterPress(elapsed) {
@@ -442,7 +499,6 @@ function tmShowAnalytics() {
 
   // Build round rows
   anRounds.innerHTML = '';
-  const maxDiff = Math.max(...rounds.map(r => r.absDiff), 1);
 
   rounds.forEach(r => {
     const rating = tmRoundRating(r.absDiff);

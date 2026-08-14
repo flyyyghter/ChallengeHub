@@ -389,7 +389,13 @@ body {
 .char.correct { color: var(--green); }
 .char.wrong   { color: var(--red); background: var(--red-s); }
 .char.pending { color: var(--t3); }
-.char.cursor::after {
+.char.cursor-before::before {
+  content: '';
+  position: absolute; left: -2px; top: 10%; height: 80%; width: 2px;
+  background: var(--ac); border-radius: 1px;
+  animation: blink 1s steps(1) infinite;
+}
+.char.cursor-after::after {
   content: '';
   position: absolute; right: -2px; top: 10%; height: 80%; width: 2px;
   background: var(--ac); border-radius: 1px;
@@ -522,14 +528,6 @@ body {
   background: linear-gradient(90deg, var(--ac), #a49bff);
   border-radius: 4px 0 0 4px;
   transition: width 0.05s linear;
-}
-/* Target marker line */
-.tm-bar-target {
-  position: absolute;
-  top: -4px; bottom: -4px; width: 2px;
-  background: var(--yellow);
-  border-radius: 1px;
-  box-shadow: 0 0 6px rgba(245,193,71,0.5);
 }
 
 /* STOP button */
