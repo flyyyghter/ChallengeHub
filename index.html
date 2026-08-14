@@ -46,6 +46,10 @@
           <span class="tab-icon">⏱</span>
           <span data-i18n="tab_timing">Timing</span>
         </button>
+        <button class="tab-btn" id="tab-math" role="tab" aria-selected="false" data-tab="math">
+          <span class="tab-icon">🧮</span>
+          <span data-i18n="tab_math">Math Rush</span>
+        </button>
       </nav>
     </header>
 
@@ -216,6 +220,18 @@
             <p class="preview-hint" data-i18n="tm_preview_hint">Нажми STOP когда таймер покажет это время</p>
           </div>
 
+          <!-- Blind Mode Toggle -->
+          <div class="blind-toggle-wrap">
+            <label class="liquid-switch" for="tm-blind-check">
+              <input type="checkbox" id="tm-blind-check" />
+              <span class="switch-slider"></span>
+            </label>
+            <div class="blind-info">
+              <span class="blind-title" data-i18n="blind_mode_title">🙈 Слепой режим (Blind Mode)</span>
+              <span class="blind-desc" data-i18n="blind_mode_desc">Таймер и шкала скрываются сразу после старта</span>
+            </div>
+          </div>
+
           <button class="btn-primary" id="btn-tm-start" data-i18n="btn_start_game">Начать игру →</button>
         </div>
       </section>
@@ -237,7 +253,7 @@
           <!-- Running timer -->
           <div class="tm-clock-wrap">
             <div class="tm-clock" id="tm-clock">0:00</div>
-            <div class="tm-bar-track">
+            <div class="tm-bar-track" id="tm-bar-track">
               <div class="tm-bar-fill" id="tm-bar-fill"></div>
             </div>
           </div>
@@ -300,6 +316,128 @@
       </section>
 
     </div><!-- /timing tab -->
+
+
+    <!-- ══════════════ MATH RUSH TAB ══════════════ -->
+    <div class="tab-content hidden" id="tab-content-math">
+
+      <!-- Math Intro -->
+      <section class="panel" id="math-intro">
+        <div class="glass-card">
+          <h1 class="card-title" data-i18n="math_title">Math Rush 🧮</h1>
+          <p class="card-desc" data-i18n="math_desc">Проверь скорость мышления! Реши как можно больше математических примеров за 30 секунд. Выбирай ответ кнопками или клавишами 1-4.</p>
+
+          <div class="math-preview-grid">
+            <div class="math-preview-box">
+              <span class="math-p-icon">⏱</span>
+              <span class="math-p-val">30s</span>
+              <span class="math-p-lbl" data-i18n="math_p_time">Таймер спринта</span>
+            </div>
+            <div class="math-preview-box">
+              <span class="math-p-icon">⚡</span>
+              <span class="math-p-val">Combo</span>
+              <span class="math-p-lbl" data-i18n="math_p_combo">Множитель очков</span>
+            </div>
+            <div class="math-preview-box">
+              <span class="math-p-icon">🧠</span>
+              <span class="math-p-val">IQ Rush</span>
+              <span class="math-p-lbl" data-i18n="math_p_speed">Блиц-режим</span>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="btn-math-start" data-i18n="btn_start_math">Начать блиц-счёт →</button>
+        </div>
+      </section>
+
+      <!-- Math Game Screen -->
+      <section class="panel hidden" id="math-game">
+        <div class="glass-card math-card">
+
+          <!-- Game Status Bar -->
+          <div class="math-status-bar">
+            <div class="math-stat-pill">
+              <span class="stat-icon">⏱</span>
+              <span class="math-time" id="math-timer">30.0</span>
+            </div>
+            <div class="math-stat-pill combo-pill" id="math-combo-pill">
+              <span class="stat-icon">⚡</span>
+              <span class="math-combo" id="math-combo">x1</span>
+            </div>
+            <div class="math-stat-pill score-pill">
+              <span class="stat-icon">🎯</span>
+              <span class="math-score" id="math-score">0</span>
+            </div>
+          </div>
+
+          <!-- Draining Time Bar -->
+          <div class="math-timer-track">
+            <div class="math-timer-fill" id="math-timer-fill"></div>
+          </div>
+
+          <!-- Problem Expression Display -->
+          <div class="math-problem-wrap" id="math-problem-wrap">
+            <div class="math-problem" id="math-problem">12 + 15 = ?</div>
+          </div>
+
+          <!-- 4 Liquid Glass Answer Options -->
+          <div class="math-options-grid" id="math-options-grid">
+            <button class="math-option-btn" data-index="0" id="math-opt-0">
+              <span class="opt-key">1</span>
+              <span class="opt-text">—</span>
+            </button>
+            <button class="math-option-btn" data-index="1" id="math-opt-1">
+              <span class="opt-key">2</span>
+              <span class="opt-text">—</span>
+            </button>
+            <button class="math-option-btn" data-index="2" id="math-opt-2">
+              <span class="opt-key">3</span>
+              <span class="opt-text">—</span>
+            </button>
+            <button class="math-option-btn" data-index="3" id="math-opt-3">
+              <span class="opt-key">4</span>
+              <span class="opt-text">—</span>
+            </button>
+          </div>
+
+          <div class="hint text-center" data-i18n="math_hint_keys">💡 Жми кнопки или клавиши 1, 2, 3, 4 на клавиатуре</div>
+        </div>
+      </section>
+
+      <!-- Math Result Screen -->
+      <section class="panel hidden" id="math-result">
+        <div class="glass-card result-card">
+          <div class="result-emoji" id="math-res-icon">🏆</div>
+          <h2 class="result-title" id="math-res-title" data-i18n="math_res_done">Блиц завершён!</h2>
+          <p class="result-sub" id="math-res-sub"></p>
+
+          <div class="result-grid">
+            <div class="result-cell">
+              <span class="result-big" id="math-r-score">0</span>
+              <span class="result-lbl" data-i18n="math_lbl_score">Очки</span>
+            </div>
+            <div class="result-cell">
+              <span class="result-big" id="math-r-correct">0</span>
+              <span class="result-lbl" data-i18n="math_lbl_correct">Решено</span>
+            </div>
+            <div class="result-cell">
+              <span class="result-big" id="math-r-acc">0%</span>
+              <span class="result-lbl" data-i18n="math_lbl_acc">Точность</span>
+            </div>
+            <div class="result-cell">
+              <span class="result-big" id="math-r-streak">x1</span>
+              <span class="result-lbl" data-i18n="math_lbl_streak">Макс. комбо</span>
+            </div>
+          </div>
+
+          <div class="rating-box" id="math-rating"></div>
+
+          <div class="actions">
+            <button class="btn-primary" id="btn-math-retry" data-i18n="btn_replay">Сыграть снова</button>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /math tab -->
 
   </div><!-- /app -->
 

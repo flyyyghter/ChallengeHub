@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
    ChallengeHub — app.js
-   Mini Games: Typing Speed + Timing Challenge
-   Settings, Localization (RU/EN), Liquid Sound Engine
+   Mini Games: Typing Speed • Timing (Blind Mode) • Math Rush
+   Localization (RU/EN) • Liquid Sound Engine • Hotkeys
 ═══════════════════════════════════════════════════════════ */
 
 /* ════════════════════════════════
@@ -11,6 +11,7 @@ const i18n = {
   ru: {
     tab_typing: 'Typing',
     tab_timing: 'Timing',
+    tab_math: 'Math Rush',
     settings_title: 'Настройки',
     setting_lang_label: 'Язык интерфейса',
     setting_lang_desc: 'Русский / English',
@@ -52,13 +53,16 @@ const i18n = {
     rate_insane: 'Реактивный!',
     rate_insane_desc: 'Невероятная скорость. Ты точно практикуешься!',
 
-    // Timing Challenge
+    // Timing Challenge & Blind Mode
     tm_title: 'Timing Challenge',
     tm_desc: 'Таймер идёт от 0 до 10 секунд. Тебе покажут случайный момент — нажми кнопку точно в этот момент. Три раунда, потом аналитика.',
     tm_target_preview_lbl: 'Цель',
     tm_preview_hint: 'Нажми STOP когда таймер покажет это время',
+    blind_mode_title: '🙈 Слепой режим (Blind Mode)',
+    blind_mode_desc: 'Таймер и шкала скрываются сразу после старта',
     btn_start_game: 'Начать игру →',
     round_prefix: 'Раунд',
+    blind_badge_suffix: '(Слепой)',
     tm_target_lbl: 'Попади в момент',
     tm_hint_start: 'Нажми Start (или Пробел) чтобы запустить таймер',
     tm_hint_running: 'Нажми STOP (или Пробел) в нужный момент!',
@@ -81,7 +85,7 @@ const i18n = {
     tm_r_miss: 'Промах',
     tm_r_fail: 'Мимо кассы',
 
-    // Final Ratings
+    // Timing Final Ratings
     fin_legend: 'Легендарно!',
     fin_legend_desc: 'Реакция как у машины. Невероятно.',
     fin_sniper: 'Снайпер!',
@@ -92,11 +96,36 @@ const i18n = {
     fin_medium_desc: 'Ещё немного практики — и будет огонь.',
     fin_train: 'Тренируйся!',
     fin_train_desc: 'Чувство ритма нарабатывается. Не сдавайся!',
+
+    // Math Rush
+    math_title: 'Math Rush 🧮',
+    math_desc: 'Проверь скорость мышления! Реши как можно больше математических примеров за 30 секунд. Выбирай ответ кнопками или клавишами 1-4.',
+    math_p_time: 'Таймер спринта',
+    math_p_combo: 'Множитель очков',
+    math_p_speed: 'Блиц-режим',
+    btn_start_math: 'Начать блиц-счёт →',
+    math_hint_keys: '💡 Жми кнопки или клавиши 1, 2, 3, 4 на клавиатуре',
+    math_res_done: 'Блиц завершён!',
+    math_lbl_score: 'Очки',
+    math_lbl_correct: 'Решено',
+    math_lbl_acc: 'Точность',
+    math_lbl_streak: 'Макс. комбо',
+
+    // Math Ratings
+    math_r_einstein: 'Эйнштейн! 🧠',
+    math_r_einstein_desc: 'Колоссальная скорость вычислений. Мозг-калькулятор!',
+    math_r_fast: 'Быстрый ум! ⚡',
+    math_r_fast_desc: 'Отличный темп и минимум ошибок. Так держать!',
+    math_r_good: 'Хороший счёт 👍',
+    math_r_good_desc: 'Уверенное владение устным счётом.',
+    math_r_slow: 'Разминка пальцев 👀',
+    math_r_slow_desc: 'Главное тренироваться каждый день — скорость придёт!',
   },
 
   en: {
     tab_typing: 'Typing',
     tab_timing: 'Timing',
+    tab_math: 'Math Rush',
     settings_title: 'Settings',
     setting_lang_label: 'Language',
     setting_lang_desc: 'Russian / English',
@@ -138,13 +167,16 @@ const i18n = {
     rate_insane: 'Insane!',
     rate_insane_desc: 'Incredible speed. Pure muscle memory!',
 
-    // Timing Challenge
+    // Timing Challenge & Blind Mode
     tm_title: 'Timing Challenge',
     tm_desc: 'A random timestamp from 0 to 10s is given. Hit STOP exactly when the clock reaches it. 3 rounds followed by breakdown.',
     tm_target_preview_lbl: 'Target',
     tm_preview_hint: 'Hit STOP when timer hits this exact time',
+    blind_mode_title: '🙈 Blind Mode',
+    blind_mode_desc: 'Timer digits and progress bar are hidden after launch',
     btn_start_game: 'Start Game →',
     round_prefix: 'Round',
+    blind_badge_suffix: '(Blind)',
     tm_target_lbl: 'Hit the moment',
     tm_hint_start: 'Press Start (or Spacebar) to start the timer',
     tm_hint_running: 'Press STOP (or Spacebar) at the exact moment!',
@@ -167,7 +199,7 @@ const i18n = {
     tm_r_miss: 'Missed',
     tm_r_fail: 'Way off',
 
-    // Final Ratings
+    // Timing Final Ratings
     fin_legend: 'Legendary!',
     fin_legend_desc: 'Machine-like reaction. Incredible precision.',
     fin_sniper: 'Sniper!',
@@ -178,6 +210,30 @@ const i18n = {
     fin_medium_desc: 'Keep training — you will get there.',
     fin_train: 'Keep Trying!',
     fin_train_desc: 'Rhythm sense takes practice. Don’t give up!',
+
+    // Math Rush
+    math_title: 'Math Rush 🧮',
+    math_desc: 'Test your brain speed! Solve as many arithmetic problems as you can in 30 seconds. Choose with buttons or keys 1-4.',
+    math_p_time: 'Sprint Timer',
+    math_p_combo: 'Score Multiplier',
+    math_p_speed: 'Rush Mode',
+    btn_start_math: 'Start Math Rush →',
+    math_hint_keys: '💡 Click options or press 1, 2, 3, 4 on your keyboard',
+    math_res_done: 'Rush Completed!',
+    math_lbl_score: 'Score',
+    math_lbl_correct: 'Solved',
+    math_lbl_acc: 'Accuracy',
+    math_lbl_streak: 'Max Combo',
+
+    // Math Ratings
+    math_r_einstein: 'Einstein! 🧠',
+    math_r_einstein_desc: 'Colossal mental arithmetic speed. High IQ precision!',
+    math_r_fast: 'Quick Mind! ⚡',
+    math_r_fast_desc: 'Excellent rapid pace and few mistakes. Great job!',
+    math_r_good: 'Solid Calculation 👍',
+    math_r_good_desc: 'Confident quick math capability.',
+    math_r_slow: 'Warmup Practice 👀',
+    math_r_slow_desc: 'Keep exercising your mind daily — speed will follow!',
   }
 };
 
@@ -190,7 +246,6 @@ const settings = {
   muted: localStorage.getItem('ch_muted') === 'true',
 };
 
-// Web Audio Liquid Synthesizer & Sound File Loader
 let audioCtx = null;
 let clickAudioBuffer = null;
 
@@ -205,7 +260,7 @@ function getAudioContext() {
   return audioCtx;
 }
 
-// Preload sound.wav into memory for zero-latency button clicks
+// Preload sound.wav for button clicks
 async function loadClickSound() {
   try {
     const response = await fetch('sound.wav');
@@ -214,13 +269,9 @@ async function loadClickSound() {
     if (ctx) {
       ctx.decodeAudioData(arrayBuffer, (decoded) => {
         clickAudioBuffer = decoded;
-      }, (err) => {
-        // decoding error fallback
-      });
+      }, () => {});
     }
-  } catch (e) {
-    // Audio element fallback handles file:// or offline protocols
-  }
+  } catch (e) {}
 }
 loadClickSound();
 
@@ -237,14 +288,12 @@ function playSound(type) {
     gain.connect(ctx.destination);
 
     if (type === 'click') {
-      // Use uploaded sound.wav for button clicks
       if (clickAudioBuffer) {
         const source = ctx.createBufferSource();
         source.buffer = clickAudioBuffer;
         source.connect(gain);
         source.start(now);
       } else {
-        // Instant HTML5 Audio fallback
         const audio = new Audio('sound.wav');
         audio.volume = Math.min(1, Math.max(0, (settings.volume / 100)));
         audio.play().catch(() => {});
@@ -256,7 +305,6 @@ function playSound(type) {
     osc.connect(gain);
 
     if (type === 'bubble') {
-      // Soft water droplet blip
       osc.type = 'sine';
       osc.frequency.setValueAtTime(450, now);
       osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
@@ -271,17 +319,21 @@ function playSound(type) {
       osc.start(now);
       osc.stop(now + 0.15);
     } else if (type === 'win') {
-      // Harmonic liquid chime
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, now); // D5
-      osc.frequency.setValueAtTime(880, now + 0.08); // A5
+      osc.frequency.setValueAtTime(587.33, now);
+      osc.frequency.setValueAtTime(880, now + 0.08);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
       osc.start(now);
       osc.stop(now + 0.35);
+    } else if (type === 'wrong') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.linearRampToValueAtTime(140, now + 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.start(now);
+      osc.stop(now + 0.12);
     }
-  } catch (e) {
-    // Ignore audio restrictions
-  }
+  } catch (e) {}
 }
 
 /* ════════════════════════════════
@@ -296,25 +348,22 @@ function updateLanguage(lang) {
   settings.lang = lang;
   localStorage.setItem('ch_lang', lang);
 
-  // Update active state on lang buttons
   document.getElementById('lang-ru').classList.toggle('active', lang === 'ru');
   document.getElementById('lang-en').classList.toggle('active', lang === 'en');
 
-  // Update all [data-i18n] text nodes
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.dataset.i18n;
     if (t(key)) el.textContent = t(key);
   });
 
-  // Update placeholders [data-i18n-ph]
   document.querySelectorAll('[data-i18n-ph]').forEach(el => {
     const key = el.dataset.i18nPh;
     if (t(key)) el.placeholder = t(key);
   });
 
-  // Update dynamic round badge if on timing screen
   if (tmState.round > 0) {
-    tmRoundBadge.textContent = `${t('round_prefix')} ${tmState.round} / ${TM_ROUNDS}`;
+    const blindSuffix = tmState.blindMode ? ` ${t('blind_badge_suffix')}` : '';
+    tmRoundBadge.textContent = `${t('round_prefix')} ${tmState.round} / ${TM_ROUNDS}${blindSuffix}`;
   }
 }
 
@@ -366,7 +415,6 @@ btnLangEn.addEventListener('click', () => {
   playSound('bubble');
 });
 
-// Volume Slider Sync
 function updateVolumeUI() {
   volSlider.value = settings.volume;
   volValueDisplay.textContent = settings.muted ? '0%' : `${settings.volume}%`;
@@ -397,7 +445,7 @@ btnMute.addEventListener('click', () => {
 });
 
 /* ════════════════════════════════
-   TAB NAVIGATION
+   TAB NAVIGATION (3 TABS)
 ════════════════════════════════ */
 const tabBtns       = document.querySelectorAll('.tab-btn');
 const tabContents   = document.querySelectorAll('.tab-content');
@@ -409,24 +457,27 @@ tabBtns.forEach(btn => {
     tabContents.forEach(c => c.classList.toggle('hidden', c.id !== `tab-content-${target}`));
     playSound('click');
 
-    // Stop timing game and reset active round UI if leaving tab during a run
-    if (target !== 'timing') {
-      if (tmState.running) {
-        tmStop();
-        btnTmGo.style.display = '';
-        btnTmStop.disabled = true;
-        btnTmStop.classList.remove('active');
-        tmHint.textContent = t('tm_hint_start');
-        tmClock.textContent = '0:00';
-        tmBarFill.style.width = '0%';
-      }
+    // Reset timing game if active
+    if (target !== 'timing' && tmState.running) {
+      tmStop();
+      btnTmGo.style.display = '';
+      btnTmStop.disabled = true;
+      btnTmStop.classList.remove('active');
+      tmHint.textContent = t('tm_hint_start');
+      tmClock.textContent = '0:00';
+      tmClock.classList.remove('blind-active');
+      tmBarTrack.classList.remove('blind-hidden');
+      tmBarFill.style.width = '0%';
+    }
+
+    // Stop Math game if leaving
+    if (target !== 'math' && mathState.running) {
+      mathStopGame();
+      showPanel(mathPanels, 'math-intro');
     }
   });
 });
 
-/* ════════════════════════════════
-   HELPERS
-════════════════════════════════ */
 function showPanel(panels, id) {
   panels.forEach(p => p.classList.toggle('hidden', p.id !== id));
 }
@@ -436,7 +487,6 @@ function fmt(ms) { return (ms / 1000).toFixed(3); }
 /* ════════════════════════════════════════════════════════
    TYPING SPEED GAME
 ════════════════════════════════════════════════════════ */
-
 const tsState = {
   target: '',
   startTime: null,
@@ -446,7 +496,6 @@ const tsState = {
   done: false,
 };
 
-/* DOM */
 const tsPanels      = [
   document.getElementById('ts-setup'),
   document.getElementById('ts-test'),
@@ -518,7 +567,6 @@ function tsRating(cps, chars) {
   return               { icon: '🚀', title: t('rate_insane'),    text: t('rate_insane_desc') };
 }
 
-/* ── Typing: setup ── */
 tsTargetInput.addEventListener('input', () => {
   tsBtnClear.classList.toggle('vis', tsTargetInput.value.length > 0);
 });
@@ -570,7 +618,6 @@ function tsStartTest() {
   setTimeout(() => tsTypingInput.focus(), 50);
 }
 
-/* ── Typing: timer ── */
 function tsTimerStart() {
   tsState.startTime = performance.now();
   tsState.running   = true;
@@ -593,7 +640,6 @@ function tsTimerStop() {
   tsStatTime.classList.remove('running');
 }
 
-/* ── Typing: input & paste protection ── */
 tsTypingInput.addEventListener('paste', (e) => {
   e.preventDefault();
   tsHint.textContent = t('ts_paste_blocked');
@@ -662,9 +708,8 @@ tsBtnNew.addEventListener('click', () => {
 });
 
 /* ════════════════════════════════════════════════════════
-   TIMING CHALLENGE GAME
+   TIMING CHALLENGE & BLIND MODE
 ════════════════════════════════════════════════════════ */
-
 const TM_ROUNDS    = 3;
 const TM_DURATION  = 10000; // 10 seconds
 
@@ -675,10 +720,10 @@ const tmState = {
   pressedMs:  null,
   interval:   null,
   running:    false,
-  rounds:     [], // [{target, pressed, diff}]
+  blindMode:  false,
+  rounds:     [],
 };
 
-/* DOM */
 const tmPanels       = [
   document.getElementById('tm-intro'),
   document.getElementById('tm-round'),
@@ -688,7 +733,9 @@ const tmPanels       = [
 const tmRoundBadge   = document.getElementById('tm-round-badge');
 const tmTargetTime   = document.getElementById('tm-target-time');
 const tmClock        = document.getElementById('tm-clock');
+const tmBarTrack     = document.getElementById('tm-bar-track');
 const tmBarFill      = document.getElementById('tm-bar-fill');
+const tmBlindCheck   = document.getElementById('tm-blind-check');
 const btnTmStart     = document.getElementById('btn-tm-start');
 const btnTmGo        = document.getElementById('btn-tm-go');
 const btnTmStop      = document.getElementById('btn-tm-stop');
@@ -708,14 +755,12 @@ const anRating       = document.getElementById('an-rating');
 const tmFinalIcon    = document.getElementById('tm-final-icon');
 const btnTmReplay    = document.getElementById('btn-tm-replay');
 
-/* Format for timing display: "s:cc" (centiseconds) */
 function tmFmt(ms) {
   const s  = Math.floor(ms / 1000);
   const cc = Math.floor((ms % 1000) / 10);
   return `${s}:${String(cc).padStart(2, '0')}`;
 }
 
-/* Generate random target in exact 10ms steps (1.00s .. 8.99s) */
 function tmRandomTarget() {
   return 1000 + Math.floor(Math.random() * 800) * 10;
 }
@@ -730,8 +775,9 @@ btnTmReplay.addEventListener('click', tmBeginGame);
 
 function tmBeginGame() {
   playSound('click');
-  tmState.round  = 0;
-  tmState.rounds = [];
+  tmState.round     = 0;
+  tmState.rounds    = [];
+  tmState.blindMode = tmBlindCheck.checked;
   tmBeginRound();
 }
 
@@ -743,9 +789,12 @@ function tmBeginRound() {
   tmState.pressedMs = null;
   tmState.running   = false;
 
-  tmRoundBadge.textContent = `${t('round_prefix')} ${tmState.round} / ${TM_ROUNDS}`;
+  const blindSuffix = tmState.blindMode ? ` ${t('blind_badge_suffix')}` : '';
+  tmRoundBadge.textContent = `${t('round_prefix')} ${tmState.round} / ${TM_ROUNDS}${blindSuffix}`;
   tmTargetTime.textContent = tmFmt(tmState.targetMs);
   tmClock.textContent      = '0:00';
+  tmClock.classList.remove('blind-active');
+  tmBarTrack.classList.remove('blind-hidden');
   tmBarFill.style.width    = '0%';
 
   btnTmGo.style.display   = '';
@@ -768,6 +817,11 @@ function tmLaunch() {
   tmState.startTime = performance.now();
   tmState.running   = true;
 
+  if (tmState.blindMode) {
+    tmClock.classList.add('blind-active');
+    tmBarTrack.classList.add('blind-hidden');
+  }
+
   tmState.interval = setInterval(() => {
     if (!tmState.running) return;
     const elapsed = performance.now() - tmState.startTime;
@@ -779,7 +833,12 @@ function tmLaunch() {
 
     const pct = (elapsed / TM_DURATION) * 100;
     tmBarFill.style.width = pct + '%';
-    tmClock.textContent   = tmFmt(elapsed);
+
+    if (tmState.blindMode) {
+      tmClock.textContent = '?.??';
+    } else {
+      tmClock.textContent = tmFmt(elapsed);
+    }
   }, 20);
 }
 
@@ -787,38 +846,6 @@ btnTmStop.addEventListener('click', () => {
   if (!tmState.running || btnTmStop.disabled) return;
   const elapsed = performance.now() - tmState.startTime;
   tmRegisterPress(elapsed);
-});
-
-/* Keyboard controls (Space / Enter) for Timing game */
-document.addEventListener('keydown', (e) => {
-  const isTimingTab = !document.getElementById('tab-content-timing').classList.contains('hidden');
-  if (!isTimingTab) return;
-
-  if (e.code === 'Space' || e.key === ' ' || e.key === 'Enter') {
-    const roundPanel = document.getElementById('tm-round');
-    const roundResultPanel = document.getElementById('tm-round-result');
-    const introPanel = document.getElementById('tm-intro');
-    const analyticsPanel = document.getElementById('tm-analytics');
-
-    if (!roundPanel.classList.contains('hidden')) {
-      e.preventDefault();
-      if (!tmState.running && btnTmGo.style.display !== 'none') {
-        tmLaunch();
-      } else if (tmState.running && !btnTmStop.disabled) {
-        const elapsed = performance.now() - tmState.startTime;
-        tmRegisterPress(elapsed);
-      }
-    } else if (!roundResultPanel.classList.contains('hidden')) {
-      e.preventDefault();
-      btnTmNext.click();
-    } else if (!introPanel.classList.contains('hidden')) {
-      e.preventDefault();
-      btnTmStart.click();
-    } else if (!analyticsPanel.classList.contains('hidden')) {
-      e.preventDefault();
-      btnTmReplay.click();
-    }
-  }
 });
 
 function tmRegisterPress(elapsed) {
@@ -829,6 +856,8 @@ function tmRegisterPress(elapsed) {
 
   const clampedElapsed = Math.min(elapsed, TM_DURATION);
   tmBarFill.style.width = ((clampedElapsed / TM_DURATION) * 100) + '%';
+  tmClock.classList.remove('blind-active');
+  tmBarTrack.classList.remove('blind-hidden');
   tmClock.textContent   = tmFmt(clampedElapsed);
 
   const diff = Math.round(elapsed - tmState.targetMs);
@@ -842,7 +871,7 @@ function tmRegisterPress(elapsed) {
     absDiff:   absDiff,
   });
 
-  setTimeout(() => tmShowRoundResult(diff, absDiff), 250);
+  setTimeout(() => tmShowRoundResult(diff, absDiff), 350);
 }
 
 function tmRoundRating(absDiff) {
@@ -888,7 +917,6 @@ btnTmNext.addEventListener('click', () => {
   }
 });
 
-/* ── Analytics ── */
 function tmShowAnalytics() {
   playSound('win');
   const rounds = tmState.rounds;
@@ -934,6 +962,280 @@ function tmShowAnalytics() {
   showPanel(tmPanels, 'tm-analytics');
 }
 
+/* ════════════════════════════════════════════════════════
+   GAME 3: MATH RUSH ENGINE
+════════════════════════════════════════════════════════ */
+const MATH_SPRINT_SEC = 30;
+
+const mathState = {
+  timeRemaining: MATH_SPRINT_SEC,
+  score:         0,
+  combo:         1,
+  maxStreak:     1,
+  correct:       0,
+  total:         0,
+  currentAnswer: 0,
+  interval:      null,
+  running:       false,
+};
+
+const mathPanels       = [
+  document.getElementById('math-intro'),
+  document.getElementById('math-game'),
+  document.getElementById('math-result'),
+];
+const btnMathStart     = document.getElementById('btn-math-start');
+const mathTimer        = document.getElementById('math-timer');
+const mathTimerFill    = document.getElementById('math-timer-fill');
+const mathComboPill    = document.getElementById('math-combo-pill');
+const mathCombo        = document.getElementById('math-combo');
+const mathScore        = document.getElementById('math-score');
+const mathProblem      = document.getElementById('math-problem');
+const mathOptionBtns   = [
+  document.getElementById('math-opt-0'),
+  document.getElementById('math-opt-1'),
+  document.getElementById('math-opt-2'),
+  document.getElementById('math-opt-3'),
+];
+
+const mathResIcon      = document.getElementById('math-res-icon');
+const mathResTitle     = document.getElementById('math-res-title');
+const mathResSub       = document.getElementById('math-res-sub');
+const mathRScore       = document.getElementById('math-r-score');
+const mathRCorrect     = document.getElementById('math-r-correct');
+const mathRAcc         = document.getElementById('math-r-acc');
+const mathRStreak      = document.getElementById('math-r-streak');
+const mathRating       = document.getElementById('math-rating');
+const btnMathRetry     = document.getElementById('btn-math-retry');
+
+btnMathStart.addEventListener('click', mathStartGame);
+btnMathRetry.addEventListener('click', mathStartGame);
+
+function mathStartGame() {
+  playSound('click');
+  mathState.timeRemaining = MATH_SPRINT_SEC;
+  mathState.score         = 0;
+  mathState.combo         = 1;
+  mathState.maxStreak     = 1;
+  mathState.correct       = 0;
+  mathState.total         = 0;
+  mathState.running       = true;
+
+  mathTimer.textContent       = MATH_SPRINT_SEC.toFixed(1);
+  mathTimerFill.style.width   = '100%';
+  mathTimerFill.classList.remove('danger');
+  mathCombo.textContent       = 'x1';
+  mathScore.textContent       = '0';
+
+  mathNextProblem();
+  showPanel(mathPanels, 'math-game');
+
+  const startTime = performance.now();
+  const totalMs = MATH_SPRINT_SEC * 1000;
+
+  clearInterval(mathState.interval);
+  mathState.interval = setInterval(() => {
+    if (!mathState.running) return;
+    const elapsed = performance.now() - startTime;
+    const remainingMs = Math.max(0, totalMs - elapsed);
+    mathState.timeRemaining = remainingMs / 1000;
+
+    mathTimer.textContent = (remainingMs / 1000).toFixed(1);
+    const pct = (remainingMs / totalMs) * 100;
+    mathTimerFill.style.width = pct + '%';
+
+    if (remainingMs <= 6000) {
+      mathTimerFill.classList.add('danger');
+    }
+
+    if (remainingMs <= 0) {
+      mathFinishGame();
+    }
+  }, 50);
+}
+
+function mathStopGame() {
+  clearInterval(mathState.interval);
+  mathState.running = false;
+}
+
+function mathGenerateProblem() {
+  const types = ['add', 'sub', 'mul'];
+  const type = types[Math.floor(Math.random() * types.length)];
+  let num1, num2, answer, expr;
+
+  if (type === 'add') {
+    num1 = Math.floor(Math.random() * 45) + 6;
+    num2 = Math.floor(Math.random() * 45) + 6;
+    answer = num1 + num2;
+    expr = `${num1} + ${num2}`;
+  } else if (type === 'sub') {
+    num1 = Math.floor(Math.random() * 60) + 20;
+    num2 = Math.floor(Math.random() * (num1 - 5)) + 4;
+    answer = num1 - num2;
+    expr = `${num1} − ${num2}`;
+  } else {
+    num1 = Math.floor(Math.random() * 11) + 2;
+    num2 = Math.floor(Math.random() * 11) + 2;
+    answer = num1 * num2;
+    expr = `${num1} × ${num2}`;
+  }
+
+  // Generate 3 unique distractors close to the answer
+  const optionsSet = new Set([answer]);
+  const offsets = [-10, 10, -2, 2, -1, 1, -3, 3, -5, 5];
+  
+  while (optionsSet.size < 4) {
+    const offset = offsets[Math.floor(Math.random() * offsets.length)];
+    const fake = Math.max(1, answer + offset);
+    optionsSet.add(fake);
+  }
+
+  const options = Array.from(optionsSet).sort(() => Math.random() - 0.5);
+  return { expr, answer, options };
+}
+
+function mathNextProblem() {
+  if (!mathState.running) return;
+  const problem = mathGenerateProblem();
+  mathState.currentAnswer = problem.answer;
+  mathProblem.textContent = `${problem.expr} = ?`;
+
+  mathOptionBtns.forEach((btn, i) => {
+    btn.className = 'math-option-btn';
+    btn.dataset.value = problem.options[i];
+    btn.querySelector('.opt-text').textContent = problem.options[i];
+  });
+}
+
+function mathHandleChoice(selectedIndex) {
+  if (!mathState.running) return;
+  const selectedBtn = mathOptionBtns[selectedIndex];
+  if (!selectedBtn) return;
+
+  const chosenVal = parseInt(selectedBtn.dataset.value, 10);
+  mathState.total++;
+
+  if (chosenVal === mathState.currentAnswer) {
+    // Correct
+    playSound('bubble');
+    mathState.correct++;
+    mathState.score += 100 * mathState.combo;
+    mathState.combo = Math.min(10, mathState.combo + 1);
+    if (mathState.combo > mathState.maxStreak) {
+      mathState.maxStreak = mathState.combo;
+    }
+
+    selectedBtn.classList.add('correct-flash');
+    mathScore.textContent = mathState.score;
+    mathCombo.textContent = `x${mathState.combo}`;
+
+    mathComboPill.classList.remove('combo-boost');
+    void mathComboPill.offsetWidth;
+    mathComboPill.classList.add('combo-boost');
+
+    setTimeout(() => mathNextProblem(), 120);
+  } else {
+    // Wrong
+    playSound('wrong');
+    mathState.combo = 1;
+    mathCombo.textContent = 'x1';
+    selectedBtn.classList.add('wrong-flash');
+
+    // Highlight the correct one briefly
+    mathOptionBtns.forEach(btn => {
+      if (parseInt(btn.dataset.value, 10) === mathState.currentAnswer) {
+        btn.classList.add('correct-flash');
+      }
+    });
+
+    setTimeout(() => mathNextProblem(), 200);
+  }
+}
+
+mathOptionBtns.forEach((btn, idx) => {
+  btn.addEventListener('click', () => mathHandleChoice(idx));
+});
+
+function mathFinishGame() {
+  mathStopGame();
+  playSound('win');
+
+  const acc = mathState.total > 0 ? Math.round((mathState.correct / mathState.total) * 100) : 0;
+  mathRScore.textContent   = mathState.score;
+  mathRCorrect.textContent = `${mathState.correct} / ${mathState.total}`;
+  mathRAcc.textContent     = `${acc}%`;
+  mathRStreak.textContent  = `x${mathState.maxStreak}`;
+
+  let rating;
+  if (mathState.score >= 3500) {
+    rating = { icon: '🧠', title: t('math_r_einstein'), text: t('math_r_einstein_desc') };
+  } else if (mathState.score >= 2000) {
+    rating = { icon: '⚡', title: t('math_r_fast'), text: t('math_r_fast_desc') };
+  } else if (mathState.score >= 1000) {
+    rating = { icon: '👍', title: t('math_r_good'), text: t('math_r_good_desc') };
+  } else {
+    rating = { icon: '👀', title: t('math_r_slow'), text: t('math_r_slow_desc') };
+  }
+
+  mathResIcon.textContent  = rating.icon;
+  mathResTitle.textContent = t('math_res_done');
+  mathResSub.textContent   = `${mathState.score} ${t('math_lbl_score')}`;
+  mathRating.innerHTML     = `<strong>${rating.title}</strong> — ${rating.text}`;
+
+  setTimeout(() => showPanel(mathPanels, 'math-result'), 300);
+}
+
+/* ════════════════════════════════
+   GLOBAL KEYBOARD CONTROLS
+════════════════════════════════ */
+document.addEventListener('keydown', (e) => {
+  // Modal close
+  if (e.key === 'Escape' && !modalBackdrop.classList.contains('hidden')) {
+    closeSettings();
+    return;
+  }
+
+  const activeTiming = !document.getElementById('tab-content-timing').classList.contains('hidden');
+  const activeMath   = !document.getElementById('tab-content-math').classList.contains('hidden');
+
+  // Timing Controls (Space / Enter)
+  if (activeTiming && (e.code === 'Space' || e.key === ' ' || e.key === 'Enter')) {
+    const roundPanel = document.getElementById('tm-round');
+    const roundResultPanel = document.getElementById('tm-round-result');
+    const introPanel = document.getElementById('tm-intro');
+    const analyticsPanel = document.getElementById('tm-analytics');
+
+    if (!roundPanel.classList.contains('hidden')) {
+      e.preventDefault();
+      if (!tmState.running && btnTmGo.style.display !== 'none') {
+        tmLaunch();
+      } else if (tmState.running && !btnTmStop.disabled) {
+        const elapsed = performance.now() - tmState.startTime;
+        tmRegisterPress(elapsed);
+      }
+    } else if (!roundResultPanel.classList.contains('hidden')) {
+      e.preventDefault();
+      btnTmNext.click();
+    } else if (!introPanel.classList.contains('hidden')) {
+      e.preventDefault();
+      btnTmStart.click();
+    } else if (!analyticsPanel.classList.contains('hidden')) {
+      e.preventDefault();
+      btnTmReplay.click();
+    }
+  }
+
+  // Math Rush Controls (Keys 1, 2, 3, 4)
+  if (activeMath && mathState.running) {
+    if (['1', '2', '3', '4'].includes(e.key)) {
+      e.preventDefault();
+      const idx = parseInt(e.key, 10) - 1;
+      mathHandleChoice(idx);
+    }
+  }
+});
+
 /* ════════════════════════════════
    INITIALIZATION
 ════════════════════════════════ */
@@ -941,3 +1243,4 @@ updateLanguage(settings.lang);
 updateVolumeUI();
 showPanel(tsPanels, 'ts-setup');
 showPanel(tmPanels, 'tm-intro');
+showPanel(mathPanels, 'math-intro');
