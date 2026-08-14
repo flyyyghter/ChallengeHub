@@ -772,7 +772,32 @@ body {
 .blind-title { font-size: 0.88rem; font-weight: 600; color: var(--t1); }
 .blind-desc { font-size: 0.74rem; color: var(--t2); }
 
-.tm-header { display: flex; align-items: center; justify-content: flex-end; margin-bottom: 20px; }
+.btn-text-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-pill);
+  color: var(--t2);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transition: all var(--tr-smooth);
+}
+.btn-text-ghost:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.tm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
 .round-badge {
   font-size: 0.74rem; font-weight: 600; color: var(--t1);
   background: radial-gradient(100% 100% at 50% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);

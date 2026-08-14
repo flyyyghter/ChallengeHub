@@ -63,6 +63,8 @@ const i18n = {
     btn_start_game: 'Начать игру →',
     round_prefix: 'Раунд',
     blind_badge_suffix: '(Слепой)',
+    btn_mode_menu: '⚙ Режимы',
+    btn_change_mode: 'Сменить режим',
     tm_target_lbl: 'Попади в момент',
     tm_hint_start: 'Нажми Start (или Пробел) чтобы запустить таймер',
     tm_hint_running: 'Нажми STOP (или Пробел) в нужный момент!',
@@ -177,6 +179,8 @@ const i18n = {
     btn_start_game: 'Start Game →',
     round_prefix: 'Round',
     blind_badge_suffix: '(Blind)',
+    btn_mode_menu: '⚙ Modes',
+    btn_change_mode: 'Change Mode',
     tm_target_lbl: 'Hit the moment',
     tm_hint_start: 'Press Start (or Spacebar) to start the timer',
     tm_hint_running: 'Press STOP (or Spacebar) at the exact moment!',
@@ -740,6 +744,8 @@ const btnTmStart     = document.getElementById('btn-tm-start');
 const btnTmGo        = document.getElementById('btn-tm-go');
 const btnTmStop      = document.getElementById('btn-tm-stop');
 const tmHint         = document.getElementById('tm-hint');
+const btnTmBackIntro = document.getElementById('btn-tm-back-intro');
+const btnTmMenu      = document.getElementById('btn-tm-menu');
 
 const tmRrIcon       = document.getElementById('tm-rr-icon');
 const tmRrTitle      = document.getElementById('tm-rr-title');
@@ -754,6 +760,16 @@ const anScore        = document.getElementById('an-score');
 const anRating       = document.getElementById('an-rating');
 const tmFinalIcon    = document.getElementById('tm-final-icon');
 const btnTmReplay    = document.getElementById('btn-tm-replay');
+
+// Restore & handle blind mode checkbox
+if (localStorage.getItem('ch_blind_mode') !== null) {
+  tmBlindCheck.checked = localStorage.getItem('ch_blind_mode') === 'true';
+}
+
+tmBlindCheck.addEventListener('change', () => {
+  localStorage.setItem('ch_blind_mode', tmBlindCheck.checked);
+  playSound('bubble');
+});
 
 function tmFmt(ms) {
   const s  = Math.floor(ms / 1000);
@@ -770,6 +786,21 @@ function tmStop() {
   tmState.running = false;
 }
 
+function tmGoToIntro() {
+  tmStop();
+  playSound('click');
+  btnTmGo.style.display = '';
+  btnTmStop.disabled = true;
+  btnTmStop.classList.remove('active');
+  tmClock.textContent = '0:00';
+  tmClock.classList.remove('blind-active');
+  tmBarTrack.classList.remove('blind-hidden');
+  tmBarFill.style.width = '0%';
+  showPanel(tmPanels, 'tm-intro');
+}
+
+btnTmBackIntro.addEventListener('click', tmGoToIntro);
+btnTmMenu.addEventListener('click', tmGoToIntro);
 btnTmStart.addEventListener('click', tmBeginGame);
 btnTmReplay.addEventListener('click', tmBeginGame);
 
